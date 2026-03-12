@@ -9,6 +9,23 @@ import {
   Project,
 } from "@/types/resume";
 
+export const emptyData: ResumeData = {
+  personalInfo: {
+    fullName: "",
+    email: "",
+    phone: "",
+    location: "",
+    website: "",
+    linkedin: "",
+    title: "",
+  },
+  summary: "",
+  experience: [],
+  education: [],
+  skills: [],
+  projects: [],
+};
+
 const defaultData: ResumeData = {
   personalInfo: {
     fullName: "Alex Johnson",
@@ -49,7 +66,8 @@ const defaultData: ResumeData = {
     {
       id: "proj-1",
       name: "CraftCV",
-      description: "An AI-powered resume builder that helps job seekers create stunning resumes in minutes using Groq AI and modern web technologies.",
+      description:
+        "An AI-powered resume builder that helps job seekers create stunning resumes in minutes using Groq AI and modern web technologies.",
       url: "craftcv.dev",
       technologies: "Next.js, TypeScript, Supabase, Groq AI",
     },
@@ -60,8 +78,12 @@ function generateId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
-export function useResumeData() {
-  const [data, setData] = useState<ResumeData>(defaultData);
+export function useResumeData(initialData?: ResumeData) {
+  const [data, setData] = useState<ResumeData>(initialData ?? defaultData);
+
+  const loadData = useCallback((loaded: ResumeData) => {
+    setData(loaded);
+  }, []);
 
   const updatePersonalInfo = useCallback((info: Partial<PersonalInfo>) => {
     setData((prev) => ({
@@ -177,6 +199,7 @@ export function useResumeData() {
 
   return {
     data,
+    loadData,
     updatePersonalInfo,
     updateSummary,
     updateSkills,
