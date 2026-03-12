@@ -373,3 +373,129 @@
   border-color: rgba(255,255,255,0.3);
   background: rgba(255,255,255,0.05);
 }
+
+/* GitHub import button in top bar */
+.githubBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 100px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s;
+  font-family: var(--font-inter), sans-serif;
+}
+
+.githubBtn:hover {
+  border-color: rgba(255,255,255,0.3);
+  color: #fff;
+  background: rgba(255,255,255,0.04);
+}
+
+/* Upgrade button (primary CTA in modal) */
+.upgradeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 24px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, var(--primary), #6d28d9);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: var(--font-inter), sans-serif;
+  box-shadow: 0 4px 20px rgba(139,92,246,0.4);
+  margin-bottom: 12px;
+}
+
+.upgradeBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(139,92,246,0.55);
+}
+
+.upgradeBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* PRO badge */
+.upgradeBadge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 100px;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+/* Upgrade features list */
+.upgradeFeatures {
+  list-style: none;
+  text-align: left;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upgradeFeatures li {
+  font-size: 0.87rem;
+  color: #a78bfa;
+  padding-left: 4px;
+}
+
+/* GitHub input */
+.githubInput {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: #fff;
+  font-size: 0.9rem;
+  font-family: var(--font-inter), sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+
+.githubInput:focus {
+  border-color: rgba(139,92,246,0.5);
+}
+
+.githubInput::placeholder {
+  color: var(--text-dim);
+}
+
+/* Error message */
+.githubError {
+  font-size: 0.82rem;
+  color: #fca5a5;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+/* Mini spinner for import button */
+.miniSpinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}

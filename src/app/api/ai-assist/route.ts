@@ -24,6 +24,10 @@ export async function POST(req: NextRequest) {
       systemPrompt =
         "You are a career coach. Suggest 8-10 relevant technical and soft skills as a comma-separated list. Return ONLY the comma-separated skills, nothing else.";
       userPrompt = `Suggest skills for this profile: ${context}`;
+    } else if (type === "github") {
+      systemPrompt =
+        "You are an expert resume writer. Given a GitHub profile's data (bio, repos, languages), generate structured resume content. Return a JSON object with these exact keys: { \"summary\": string, \"skills\": string (comma-separated), \"projects\": [ { \"name\": string, \"description\": string, \"tech\": string, \"link\": string }] }. Return ONLY valid JSON, nothing else.";
+      userPrompt = `Generate resume content from this GitHub profile data: ${context}`;
     } else {
       return NextResponse.json({ error: "Unknown type" }, { status: 400 });
     }
@@ -33,9 +37,9 @@ export async function POST(req: NextRequest) {
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
-      model: "llama3-8b-8192",
+      model: "llama-3.3-70b-versatile",
       temperature: 0.7,
-      max_tokens: 500,
+      max_tokens: 800,
     });
 
     const result = completion.choices[0]?.message?.content ?? "";
