@@ -1,0 +1,244 @@
+/* Shared form styles */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sectionHeading {
+  font-family: var(--font-outfit), sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.sectionSubheading {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.input {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  color: #fff;
+  font-size: 0.875rem;
+  font-family: var(--font-inter), sans-serif;
+  outline: none;
+  transition: border-color 0.3s, background 0.3s;
+  width: 100%;
+}
+
+.input::placeholder {
+  color: var(--text-dim);
+}
+
+.input:focus {
+  border-color: rgba(139,92,246,0.5);
+  background: rgba(139,92,246,0.06);
+}
+
+.textarea {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  color: #fff;
+  font-size: 0.875rem;
+  font-family: var(--font-inter), sans-serif;
+  outline: none;
+  resize: vertical;
+  min-height: 110px;
+  line-height: 1.6;
+  transition: border-color 0.3s, background 0.3s;
+  width: 100%;
+}
+
+.textarea::placeholder {
+  color: var(--text-dim);
+}
+
+.textarea:focus {
+  border-color: rgba(139,92,246,0.5);
+  background: rgba(139,92,246,0.06);
+}
+
+/* Entry card (experience / education / project) */
+.entryCard {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+
+.entryCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.entryCardTitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.deleteBtn {
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid rgba(244, 63, 94, 0.25);
+  color: #f87171;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.deleteBtn:hover {
+  background: rgba(244, 63, 94, 0.2);
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px;
+  border-radius: 12px;
+  border: 1px dashed rgba(139,92,246,0.4);
+  background: transparent;
+  color: #a78bfa;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: var(--font-inter), sans-serif;
+  width: 100%;
+}
+
+.addBtn:hover {
+  background: rgba(139,92,246,0.08);
+  border-color: rgba(139,92,246,0.6);
+}
+
+/* AI Button */
+.aiBtn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(139,92,246,0.4);
+  background: rgba(139,92,246,0.1);
+  color: #c4b5fd;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: var(--font-inter), sans-serif;
+  align-self: flex-start;
+}
+
+.aiBtn:hover {
+  background: rgba(139,92,246,0.2);
+  border-color: rgba(139,92,246,0.7);
+}
+
+.aiBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.aiSpinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(196,181,253,0.3);
+  border-radius: 50%;
+  border-top-color: #c4b5fd;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Skills */
+.skillsInputRow {
+  display: flex;
+  gap: 8px;
+}
+
+.skillsWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skillTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 100px;
+  background: rgba(139,92,246,0.12);
+  border: 1px solid rgba(139,92,246,0.25);
+  font-size: 0.8rem;
+  color: #c4b5fd;
+}
+
+.skillRemove {
+  background: none;
+  border: none;
+  color: #a78bfa;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.checkboxRow input {
+  accent-color: var(--primary);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}

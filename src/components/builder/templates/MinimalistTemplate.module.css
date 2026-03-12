@@ -1,0 +1,145 @@
+.resume {
+  width: 100%;
+  min-height: 1123px; /* A4 ratio */
+  background: #fff;
+  color: #1e293b;
+  font-family: 'Georgia', serif;
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 48px 52px;
+}
+
+/* Header */
+.header {
+  border-bottom: 2px solid #1e293b;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.name {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+  font-family: 'Georgia', serif;
+  margin-bottom: 4px;
+}
+
+.title {
+  font-size: 13px;
+  font-weight: 400;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.contacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  font-size: 11.5px;
+  color: #475569;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Sections */
+.section {
+  margin-bottom: 18px;
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #0f172a;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 4px;
+}
+
+.summaryText {
+  font-size: 12.5px;
+  color: #374151;
+  line-height: 1.7;
+}
+
+/* Experience / Education entry */
+.entry {
+  margin-bottom: 14px;
+}
+
+.entryTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 2px;
+}
+
+.entryTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.entryDates {
+  font-size: 11px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.entrySubtitle {
+  font-size: 12px;
+  color: #4c6080;
+  margin-bottom: 5px;
+  font-style: italic;
+}
+
+.entryDesc {
+  font-size: 12px;
+  color: #374151;
+  line-height: 1.65;
+  white-space: pre-line;
+}
+
+/* Skills */
+.skillsWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skillPill {
+  padding: 3px 12px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 100px;
+  font-size: 11.5px;
+  color: #334155;
+}
+
+/* GPA */
+.gpa {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-left: 6px;
+}
+
+/* Project URL */
+.projUrl {
+  font-size: 11px;
+  color: #3b82f6;
+  margin-bottom: 3px;
+}
+
+.projTech {
+  font-size: 11px;
+  color: #94a3b8;
+  font-style: italic;
+}
