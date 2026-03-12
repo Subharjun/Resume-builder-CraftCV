@@ -6,7 +6,12 @@ interface Props {
 }
 
 export default function MinimalistTemplate({ data }: Props) {
-  const { personalInfo: p, summary, experience, education, skills, projects } = data;
+  const { personalInfo: p, summary, experience, education, skills: propSkills, projects } = data;
+  const skills: string[] = Array.isArray(propSkills) 
+    ? propSkills 
+    : typeof propSkills === 'string' 
+      ? (propSkills as string).split(',').map(s => s.trim()).filter(Boolean)
+      : [];
 
   return (
     <div className={styles.resume} id="resume-preview">

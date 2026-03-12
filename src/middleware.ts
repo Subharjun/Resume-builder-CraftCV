@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -30,8 +30,8 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
   const pathname = request.nextUrl.pathname;
 
-  // Protect /dashboard
-  if (pathname.startsWith("/dashboard") && !user) {
+  // Protect /dashboard and /builder
+  if ((pathname.startsWith("/dashboard") || pathname.startsWith("/builder")) && !user) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
@@ -48,5 +48,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/auth/login", "/auth/signup"],
+  matcher: ["/dashboard/:path*", "/builder/:path*", "/auth/login", "/auth/signup"],
 };

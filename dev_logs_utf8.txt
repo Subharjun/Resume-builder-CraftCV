@@ -1,0 +1,55 @@
+﻿
+> craft-cv@0.1.0 dev
+> next dev
+
+Γû▓ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.31.132:3000
+- Environments: .env.local
+
+Γ£ô Starting...
+Γ£ô Ready in 1292ms
+ GET /builder 200 in 421ms (compile: 298ms, render: 123ms)
+Fetching from SerpAPI: https://serpapi.com/search?engine=google_images&q=professional+resume+template+clean+ATS+2024&api_key=HIDDEN&num=12&safe=active&ijn=0&imgsz=large
+ GET /api/search-templates?category=professional 500 in 550ms (compile: 85ms, render: 465ms)
+Fetching from SerpAPI: https://serpapi.com/search?engine=google_images&q=professional+resume+template+clean+ATS+2024&api_key=HIDDEN&num=12&safe=active&ijn=0&imgsz=large
+ GET /api/search-templates?category=professional 500 in 433ms (compile: 3ms, render: 430ms)
+Fetching from SerpAPI: https://serpapi.com/search?engine=google_images&q=professional+resume+template+clean+ATS+2024&api_key=HIDDEN&num=16&safe=active
+SerpAPI data keys: [
+  'search_metadata',
+  'search_parameters',
+  'search_information',
+  'suggested_searches',
+  'images_results',
+  'related_searches',
+  'serpapi_pagination'
+]
+ GET /api/search-templates?category=professional 200 in 5.5s (compile: 70ms, render: 5.5s)
+Fetching from SerpAPI: https://serpapi.com/search?engine=google_images&q=professional+resume+template+clean+ATS+2024&api_key=HIDDEN&num=16&safe=active
+SerpAPI data keys: [
+  'search_metadata',
+  'search_parameters',
+  'search_information',
+  'suggested_searches',
+  'images_results',
+  'related_searches',
+  'serpapi_pagination'
+]
+ GET /api/search-templates?category=professional 200 in 306ms (compile: 7ms, render: 299ms)
+Fetching from SerpAPI: https://serpapi.com/search?engine=google_images&q=professional+resume+template+clean+ATS+2024&api_key=HIDDEN&num=16&safe=active
+SerpAPI data keys: [
+  'search_metadata',
+  'search_parameters',
+  'search_information',
+  'suggested_searches',
+  'images_results',
+  'related_searches',
+  'serpapi_pagination'
+]
+ GET /api/search-templates?category=professional 200 in 174ms (compile: 13ms, render: 161ms)
+ GET /builder 200 in 98ms (compile: 63ms, render: 35ms)
+Γùï Compiling /api/vision-template ...
+ POST /api/vision-template 200 in 5.2s (compile: 4.1s, render: 1075ms)
+ GET /dashboard 200 in 1581ms (compile: 209ms, proxy.ts: 1332ms, render: 40ms)
+ GET / 200 in 214ms (compile: 175ms, render: 39ms)
+ GET / 200 in 42ms (compile: 10ms, render: 31ms)

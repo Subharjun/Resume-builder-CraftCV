@@ -16,7 +16,7 @@ Extract and structure the information into a JSON resume object with these exact
   "fullName": string or "",
   "title": string or "",
   "summary": string (professional 2-3 sentence summary based on their About/headline),
-  "skills": string (comma-separated relevant skills extracted from their profile),
+  "skills": string[] (array of relevant technical and soft skills),
   "experience": [
     {
       "company": string,

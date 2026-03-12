@@ -11,7 +11,7 @@ const CATEGORIES: Record<string, string> = {
 export async function GET(req: NextRequest) {
   const category = req.nextUrl.searchParams.get("category") || "professional";
   const query = CATEGORIES[category] || CATEGORIES.professional;
-  const apiKey = process.env.SERPAPI_KEY;
+  const apiKey = (process.env.SERPAPI_KEY || "").trim();
 
   if (!apiKey) {
     return NextResponse.json({ error: "SerpAPI key not configured" }, { status: 500 });
@@ -22,23 +22,25 @@ export async function GET(req: NextRequest) {
     url.searchParams.set("engine", "google_images");
     url.searchParams.set("q", query);
     url.searchParams.set("api_key", apiKey);
-    url.searchParams.set("num", "12");
+    url.searchParams.set("num", "16");
     url.searchParams.set("safe", "active");
-    url.searchParams.set("ijn", "0");
-    url.searchParams.set("imgsz", "large");
 
-    const res = await fetch(url.toString(), { next: { revalidate: 3600 } });
-    if (!res.ok) throw new Error(`SerpAPI error: ${res.status}`);
+    console.log("Fetching from SerpAPI:", url.toString().replace(apiKey, "HIDDEN"));
+    const res = await fetch(url.toString(), {
+      headers: { "Accept": "application/json" },
+      cache: 'no-store'
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("SerpAPI error response:", errText);
+      throw new Error(`SerpAPI error: ${res.status}`);
+    }
 
     const data = await res.json();
+    console.log("SerpAPI data keys:", Object.keys(data));
 
     const images = (data.images_results ?? []).slice(0, 12).map(
-      (item: {
-        thumbnail: string;
-        title: string;
-        link: string;
-        original?: string;
-      }) => ({
+      (item: any) => ({
         thumbnail: item.thumbnail,
         title: item.title || "Resume Template",
         source: item.link,
@@ -47,8 +49,8 @@ export async function GET(req: NextRequest) {
     );
 
     return NextResponse.json({ images, category });
-  } catch (error) {
-    console.error("Search templates error:", error);
-    return NextResponse.json({ error: "Failed to fetch templates" }, { status: 500 });
+  } catch (error: any) {
+    console.error("Search templates error:", error.message, error.stack);
+    return NextResponse.json({ error: error.message || "Failed to fetch templates" }, { status: 500 });
   }
 }

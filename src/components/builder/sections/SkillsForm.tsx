@@ -8,7 +8,14 @@ interface Props {
   onChange: (skills: string[]) => void;
 }
 
-export default function SkillsForm({ skills, jobTitle, onChange }: Props) {
+export default function SkillsForm({ skills: propSkills, jobTitle, onChange }: Props) {
+  // Defensive check: ensure skills is an array
+  const skills = Array.isArray(propSkills) 
+    ? propSkills 
+    : typeof propSkills === 'string' 
+      ? (propSkills as string).split(',').map(s => s.trim()).filter(Boolean)
+      : [];
+
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 

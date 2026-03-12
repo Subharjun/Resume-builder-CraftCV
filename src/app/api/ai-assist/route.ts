@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       userPrompt = `Suggest skills for this profile: ${context}`;
     } else if (type === "github") {
       systemPrompt =
-        "You are an expert resume writer. Given a GitHub profile's data (bio, repos, languages), generate structured resume content. Return a JSON object with these exact keys: { \"summary\": string, \"skills\": string (comma-separated), \"projects\": [ { \"name\": string, \"description\": string, \"tech\": string, \"link\": string }] }. Return ONLY valid JSON, nothing else.";
+        "You are an expert resume writer. Given a GitHub profile's data (bio, repos, languages), generate structured resume content. Return a JSON object with these exact keys: { \"summary\": string, \"skills\": string[] (array of skills), \"projects\": [ { \"name\": string, \"description\": string, \"tech\": string, \"link\": string }] }. Return ONLY valid JSON, nothing else.";
       userPrompt = `Generate resume content from this GitHub profile data: ${context}`;
     } else {
       return NextResponse.json({ error: "Unknown type" }, { status: 400 });
