@@ -6,6 +6,8 @@ import { useResumeData, emptyData } from "@/hooks/useResumeData";
 import { TemplateId, FormSection } from "@/types/resume";
 import MinimalistTemplate from "@/components/builder/templates/MinimalistTemplate";
 import ExecutiveTemplate from "@/components/builder/templates/ExecutiveTemplate";
+import CreativeTemplate, { CreativeStyle, defaultCreativeStyle } from "@/components/builder/templates/CreativeTemplate";
+import TemplateGallery from "@/components/builder/TemplateGallery";
 import PersonalInfoForm from "@/components/builder/sections/PersonalInfoForm";
 import SummaryForm from "@/components/builder/sections/SummaryForm";
 import ExperienceForm from "@/components/builder/sections/ExperienceForm";
@@ -26,6 +28,7 @@ const TABS: { id: FormSection; label: string; icon: string }[] = [
 const TEMPLATES: { id: TemplateId; label: string; locked?: boolean }[] = [
   { id: "minimalist", label: "Minimalist" },
   { id: "executive", label: "Executive" },
+  { id: "creative", label: "✦ Creative", locked: true },
 ];
 
 export default function BuilderPage() {
@@ -48,6 +51,9 @@ export default function BuilderPage() {
   const [activeTemplate, setActiveTemplate] = useState<TemplateId>("minimalist");
   const [showLocked, setShowLocked] = useState(false);
   const [isUpgraded, setIsUpgraded] = useState(false);
+  const [showGallery, setShowGallery] = useState(false);
+  const [creativeStyle, setCreativeStyle] = useState<CreativeStyle>(defaultCreativeStyle);
+  const [selectedTemplateImg, setSelectedTemplateImg] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "login">("idle");
@@ -113,7 +119,12 @@ export default function BuilderPage() {
 
   const handleTemplateSelect = (t: { id: TemplateId; locked?: boolean }) => {
     if (t.locked && !isUpgraded) { setShowLocked(true); return; }
-    setActiveTemplate(t.id);
+    if (t.id === "creative") {
+      setShowGallery(true);
+      setActiveTemplate("creative" as TemplateId);
+    } else {
+      setActiveTemplate(t.id);
+    }
   };
 
   const handleGithubImport = async () => {
@@ -371,41 +382,56 @@ export default function BuilderPage() {
           <div className={styles.previewPaper} id="resume-preview">
             {activeTemplate === "minimalist" ? (
               <MinimalistTemplate data={data} />
-            ) : (
+            ) : activeTemplate === "executive" ? (
               <ExecutiveTemplate data={data} />
+            ) : (
+              <CreativeTemplate data={data} style={creativeStyle} />
             )}
           </div>
         </div>
       </div>
 
-      {/* Upgrade Modal for locked template */}
+      {/* Upgrade Modal → opens gallery */}
       {showLocked && (
         <div className={styles.lockedOverlay} onClick={() => setShowLocked(false)}>
           <div className={styles.lockedCard} onClick={(e) => e.stopPropagation()}>
             <div className={styles.lockedIcon}>✦</div>
             <div className={styles.upgradeBadge}>PRO</div>
-            <h2 className={styles.lockedTitle}>Unlock Creative Template</h2>
+            <h2 className={styles.lockedTitle}>Unlock Creative Templates</h2>
             <p className={styles.lockedDesc}>
-              The Creative template features a bold two-column layout with accent colors and modern typography — perfect for design, tech, and creative roles.
+              Browse thousands of real resume templates. Pick any style — Groq AI Vision will analyze it and instantly style your resume to match.
             </p>
             <ul className={styles.upgradeFeatures}>
-              <li>✓ Creative two-column layout</li>
-              <li>✓ All future premium templates</li>
-              <li>✓ AI bullet point rewrites (unlimited)</li>
-              <li>✓ Priority PDF export</li>
+              <li>✓ Browse real templates via AI-powered search</li>
+              <li>✓ Groq Vision matches layout, colors & fonts</li>
+              <li>✓ Dynamic 2-column creative layout</li>
+              <li>✓ Unlimited AI bullet rewrites</li>
             </ul>
             <button
               className={styles.upgradeBtn}
               id="upgrade-btn"
-              onClick={() => { setIsUpgraded(true); setShowLocked(false); setActiveTemplate("creative" as TemplateId); }}
+              onClick={() => { setIsUpgraded(true); setShowLocked(false); setShowGallery(true); setActiveTemplate("creative" as TemplateId); }}
             >
-              ✦ Upgrade — Free Demo
+              ✦ Upgrade & Choose Style
             </button>
             <button className={styles.lockedClose} onClick={() => setShowLocked(false)}>
               Maybe Later
             </button>
           </div>
         </div>
+      )}
+
+      {/* Template Gallery */}
+      {showGallery && (
+        <TemplateGallery
+          onSelectStyle={(style, imgUrl) => {
+            setCreativeStyle(style);
+            setSelectedTemplateImg(imgUrl);
+            setShowGallery(false);
+            setActiveTemplate("creative" as TemplateId);
+          }}
+          onClose={() => setShowGallery(false)}
+        />
       )}
 
       {/* Unified Import Modal — GitHub + LinkedIn */}

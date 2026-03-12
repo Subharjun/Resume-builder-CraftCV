@@ -45,7 +45,7 @@ export interface ResumeData {
   projects: Project[];
 }
 
-export type TemplateId = "minimalist" | "executive";
+export type TemplateId = "minimalist" | "executive" | "creative";
 
 export type FormSection =
   | "personal"
