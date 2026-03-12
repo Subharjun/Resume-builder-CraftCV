@@ -42,6 +42,9 @@
 - **Save to Supabase** — smart insert/update (no duplicates)
 - **Export to PDF** via `html2canvas` + `jsPDF`
 - New resumes start blank; existing resumes load with full saved data
+- **AI Import** — extract data from **LinkedIn** profile text or **GitHub** username
+- **Creative Mode** — extract styling from any resume image (powered by Llama 3.2 Vision)
+- **AI Suggested Skills** — one-click skills generation based on job title
 
 ### 📊 Dashboard
 - Personalized greeting with user name
@@ -100,6 +103,9 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 
 # Groq AI — get from console.groq.com
 GROQ_API_KEY=your-groq-api-key-here
+
+# SerpApi — get from serpapi.com (for template searching)
+SERPAPI_KEY=your-serpapi-key-here
 ```
 
 ### 4. Set Up Supabase Database
@@ -160,6 +166,9 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 ```
+
+> [!WARNING]
+> Ensure `.env.local` is listed in your `.gitignore` to avoid leaking these keys on GitHub.
 
 ### 5. Enable Google OAuth (Optional)
 
@@ -237,9 +246,18 @@ src/
    - `GROQ_API_KEY`
 4. Click **Deploy**
 
-For Google OAuth in production, add your Vercel URL to:
-- **Google Cloud Console** → Authorized JavaScript origins
 - **Supabase** → Authentication → URL Configuration → Site URL
+
+### 🚀 Deployment (Render)
+
+1. **New Web Service**: Log in to [Render](https://render.com) and create a new **Web Service**.
+2. **Connect Repo**: Connect this GitHub repository.
+3. **Settings**:
+   - **Environment**: `Node`
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm run start`
+4. **Environment Variables**: Add all keys from your `.env.local` (e.g., `NEXT_PUBLIC_SUPABASE_URL`, `GROQ_API_KEY`, `SERPAPI_KEY`).
+5. **Advanced**: Render's free tier spins down after inactivity. For production, consider the "Starter" plan.
 
 ---
 
