@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 
@@ -12,10 +12,16 @@ const outfit = Outfit({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   title: "CraftCV | Premium AI Resume Builder",
   description: "Create stunning, professional resumes in minutes with AI-powered suggestions and premium templates.",
 };
+
 
 export default function RootLayout({
   children,
