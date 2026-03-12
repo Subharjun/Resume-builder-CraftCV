@@ -374,6 +374,60 @@
   background: rgba(255,255,255,0.05);
 }
 
+/* Import tabs (GitHub / LinkedIn) */
+.importTabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.importTab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-inter), sans-serif;
+}
+
+.importTabActive {
+  background: rgba(139,92,246,0.18);
+  color: #c4b5fd;
+  border: 1px solid rgba(139,92,246,0.25);
+}
+
+.importHint {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+.linkedinSteps {
+  list-style: decimal;
+  padding-left: 20px;
+  margin-bottom: 10px;
+}
+
+.linkedinSteps li {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+
 /* GitHub import button in top bar */
 .githubBtn {
   display: flex;

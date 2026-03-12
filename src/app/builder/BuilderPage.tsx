@@ -55,11 +55,17 @@ export default function BuilderPage() {
   const [editingTitle, setEditingTitle] = useState(false);
   const [loadedResumeId, setLoadedResumeId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  // GitHub import
-  const [showGithubModal, setShowGithubModal] = useState(false);
+  // Import modal (GitHub + LinkedIn)
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importTab, setImportTab] = useState<"github" | "linkedin">("github");
+  // GitHub
   const [githubUsername, setGithubUsername] = useState("");
   const [githubImporting, setGithubImporting] = useState(false);
   const [githubError, setGithubError] = useState("");
+  // LinkedIn
+  const [linkedinText, setLinkedinText] = useState("");
+  const [linkedinImporting, setLinkedinImporting] = useState(false);
+  const [linkedinError, setLinkedinError] = useState("");
   const previewRef = useRef<HTMLDivElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
 
@@ -123,31 +129,63 @@ export default function BuilderPage() {
       });
       const data = await res.json();
       if (!res.ok) { setGithubError(data.error || "Import failed"); return; }
-
-      // Fill personal info from GitHub profile
-      if (data.profile?.name) {
+      if (data.profile) {
         updatePersonalInfo({ website: data.profile.blog || "", linkedin: `github.com/${username}` });
       }
-
-      // Fill AI-generated fields
       if (data.structured) {
         if (data.structured.summary) updateSummary(data.structured.summary);
         if (data.structured.skills) updateSkills(data.structured.skills);
-        if (data.structured.projects?.length) {
-          data.structured.projects.forEach((p: { name: string; description: string; tech: string; link: string }) => {
-            addProject();
-            // Projects are added empty first — we update the last one
-          });
-        }
       }
-      setShowGithubModal(false);
+      setShowImportModal(false);
       setGithubUsername("");
-      // Navigate to summary to show result
       setActiveTab("summary");
     } catch {
       setGithubError("Network error — please try again");
     } finally {
       setGithubImporting(false);
+    }
+  };
+
+  const handleLinkedinImport = async () => {
+    if (linkedinText.trim().length < 20) return;
+    setLinkedinImporting(true);
+    setLinkedinError("");
+    try {
+      const res = await fetch("/api/linkedin-import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: linkedinText }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setLinkedinError(data.error || "Import failed"); return; }
+      const s = data.structured;
+      if (s) {
+        // Fill personal info
+        const personalUpdates: Record<string, string> = {};
+        if (s.fullName) personalUpdates.fullName = s.fullName;
+        if (s.title) personalUpdates.title = s.title;
+        if (Object.keys(personalUpdates).length) updatePersonalInfo(personalUpdates);
+        // Fill other sections
+        if (s.summary) updateSummary(s.summary);
+        if (s.skills) updateSkills(s.skills);
+        // Add experiences
+        if (s.experience?.length) {
+          s.experience.forEach((exp: { company: string; position: string; startDate: string; endDate: string; description: string }) => {
+            addExperience();
+          });
+        }
+        // Add education
+        if (s.education?.length) {
+          s.education.forEach(() => addEducation());
+        }
+      }
+      setShowImportModal(false);
+      setLinkedinText("");
+      setActiveTab(s?.fullName ? "personal" : "summary");
+    } catch {
+      setLinkedinError("Network error — please try again");
+    } finally {
+      setLinkedinImporting(false);
     }
   };
 
@@ -283,14 +321,11 @@ export default function BuilderPage() {
         <div className={styles.topBarRight}>
           <button
             className={styles.githubBtn}
-            onClick={() => setShowGithubModal(true)}
-            id="github-import-btn"
-            title="Import from GitHub"
+            onClick={() => setShowImportModal(true)}
+            id="import-btn"
+            title="Import from GitHub or LinkedIn"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{flexShrink:0}}>
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
-            </svg>
-            GitHub Import
+            ⤓ Import Profile
           </button>
           <button
             className={`${styles.saveBtn} ${saveStatus === "saved" ? styles.saveBtnSuccess : ""}`}
@@ -373,44 +408,90 @@ export default function BuilderPage() {
         </div>
       )}
 
-      {/* GitHub Import Modal */}
-      {showGithubModal && (
-        <div className={styles.lockedOverlay} onClick={() => setShowGithubModal(false)}>
-          <div className={styles.lockedCard} onClick={(e) => e.stopPropagation()} style={{maxWidth: 440}}>
-            <div className={styles.lockedIcon}>
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
-              </svg>
+      {/* Unified Import Modal — GitHub + LinkedIn */}
+      {showImportModal && (
+        <div className={styles.lockedOverlay} onClick={() => setShowImportModal(false)}>
+          <div className={styles.lockedCard} onClick={(e) => e.stopPropagation()} style={{maxWidth: 480, padding: "36px 32px"}}>
+            <h2 className={styles.lockedTitle} style={{marginBottom: 4}}>Import Profile</h2>
+            <p className={styles.lockedDesc} style={{marginBottom: 20}}>Auto-fill your resume from GitHub or LinkedIn.</p>
+
+            {/* Tabs */}
+            <div className={styles.importTabs}>
+              <button
+                className={`${styles.importTab} ${importTab === "github" ? styles.importTabActive : ""}`}
+                onClick={() => { setImportTab("github"); setGithubError(""); setLinkedinError(""); }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                GitHub
+              </button>
+              <button
+                className={`${styles.importTab} ${importTab === "linkedin" ? styles.importTabActive : ""}`}
+                onClick={() => { setImportTab("linkedin"); setGithubError(""); setLinkedinError(""); }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                LinkedIn
+              </button>
             </div>
-            <h2 className={styles.lockedTitle}>Import from GitHub</h2>
-            <p className={styles.lockedDesc}>
-              Enter your GitHub username or profile URL. AI will read your public repos and bio to auto-fill your Summary, Skills, and Projects sections.
-            </p>
-            <input
-              className={styles.githubInput}
-              placeholder="github.com/username or just username"
-              value={githubUsername}
-              onChange={(e) => { setGithubUsername(e.target.value); setGithubError(""); }}
-              onKeyDown={(e) => { if (e.key === "Enter") handleGithubImport(); }}
-              id="github-username-input"
-              autoFocus
-            />
-            {githubError && <p className={styles.githubError}>{githubError}</p>}
-            <button
-              className={styles.upgradeBtn}
-              onClick={handleGithubImport}
-              disabled={githubImporting || !githubUsername.trim()}
-              id="github-import-submit"
-            >
-              {githubImporting ? (
-                <><span className={styles.miniSpinner} /> Importing...</>
-              ) : (
-                <>⤓ Import & Fill Resume</>
-              )}
-            </button>
-            <button className={styles.lockedClose} onClick={() => setShowGithubModal(false)}>
-              Cancel
-            </button>
+
+            {/* GitHub Tab */}
+            {importTab === "github" && (
+              <div>
+                <p className={styles.importHint}>Enter your GitHub username or paste your profile URL.</p>
+                <p className={styles.importHint} style={{color: "#a78bfa", marginBottom: 12}}>✦ Fills: Summary, Skills, Projects</p>
+                <input
+                  className={styles.githubInput}
+                  placeholder="github.com/username or just username"
+                  value={githubUsername}
+                  onChange={(e) => { setGithubUsername(e.target.value); setGithubError(""); }}
+                  onKeyDown={(e) => { if (e.key === "Enter") handleGithubImport(); }}
+                  id="github-username-input"
+                  autoFocus
+                />
+                {githubError && <p className={styles.githubError}>{githubError}</p>}
+                <button
+                  className={styles.upgradeBtn}
+                  onClick={handleGithubImport}
+                  disabled={githubImporting || !githubUsername.trim()}
+                  id="github-import-submit"
+                >
+                  {githubImporting ? <><span className={styles.miniSpinner} /> Importing...</> : <>⤓ Import from GitHub</>}
+                </button>
+              </div>
+            )}
+
+            {/* LinkedIn Tab */}
+            {importTab === "linkedin" && (
+              <div>
+                <p className={styles.importHint}>
+                  LinkedIn blocks automated access, so paste your profile text below. On LinkedIn:
+                </p>
+                <ol className={styles.linkedinSteps}>
+                  <li>Open your LinkedIn profile</li>
+                  <li>Select all text (Ctrl+A) from About, Experience, and Education sections</li>
+                  <li>Copy (Ctrl+C) and paste below</li>
+                </ol>
+                <p className={styles.importHint} style={{color: "#a78bfa", marginBottom: 8}}>✦ Fills: Name, Title, Summary, Skills, Experience, Education</p>
+                <textarea
+                  className={styles.githubInput}
+                  style={{minHeight: 140, resize: "vertical", lineHeight: 1.5}}
+                  placeholder="Paste your LinkedIn profile text here..."
+                  value={linkedinText}
+                  onChange={(e) => { setLinkedinText(e.target.value); setLinkedinError(""); }}
+                  id="linkedin-text-input"
+                />
+                {linkedinError && <p className={styles.githubError}>{linkedinError}</p>}
+                <button
+                  className={styles.upgradeBtn}
+                  onClick={handleLinkedinImport}
+                  disabled={linkedinImporting || linkedinText.trim().length < 20}
+                  id="linkedin-import-submit"
+                >
+                  {linkedinImporting ? <><span className={styles.miniSpinner} /> Generating...</> : <>✦ Generate Resume from LinkedIn</>}
+                </button>
+              </div>
+            )}
+
+            <button className={styles.lockedClose} onClick={() => setShowImportModal(false)}>Cancel</button>
           </div>
         </div>
       )}
