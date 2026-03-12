@@ -106,6 +106,32 @@
   gap: 10px;
 }
 
+.saveBtn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 20px;
+  border-radius: 100px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: var(--font-inter), sans-serif;
+}
+
+.saveBtn:hover {
+  border-color: rgba(255,255,255,0.3);
+  color: #fff;
+}
+
+.saveBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .exportBtn {
   display: flex;
   align-items: center;

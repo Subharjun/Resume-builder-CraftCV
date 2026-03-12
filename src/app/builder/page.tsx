@@ -44,6 +44,8 @@ export default function BuilderPage() {
   const [activeTemplate, setActiveTemplate] = useState<TemplateId>("minimalist");
   const [showLocked, setShowLocked] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "login">("idle");
   const previewRef = useRef<HTMLDivElement>(null);
 
   const handleTemplateSelect = (t: { id: TemplateId; locked?: boolean }) => {
@@ -54,6 +56,34 @@ export default function BuilderPage() {
     setActiveTemplate(t.id);
   };
 
+  const handleSave = async () => {
+    setSaving(true);
+    setSaveStatus("idle");
+    try {
+      const { createClient } = await import("@/lib/supabase/client");
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setSaveStatus("login");
+        setSaving(false);
+        return;
+      }
+      await supabase.from("resumes").upsert({
+        user_id: user.id,
+        title: data.personalInfo.fullName
+          ? `${data.personalInfo.fullName}'s Resume`
+          : "Untitled Resume",
+        template: activeTemplate,
+        data: data as unknown as Record<string, unknown>,
+      });
+      setSaveStatus("saved");
+      setTimeout(() => setSaveStatus("idle"), 3000);
+    } catch (err) {
+      console.error("Save failed:", err);
+    } finally {
+      setSaving(false);
+    }
+  };
   const handleExportPDF = async () => {
     setExporting(true);
     try {
@@ -168,6 +198,14 @@ export default function BuilderPage() {
         </div>
 
         <div className={styles.topBarRight}>
+          <button
+            className={styles.saveBtn}
+            onClick={handleSave}
+            disabled={saving}
+            id="save-resume-btn"
+          >
+            {saving ? "Saving..." : saveStatus === "saved" ? "✓ Saved!" : saveStatus === "login" ? "Login to Save" : "Save"}
+          </button>
           <button
             className={styles.exportBtn}
             onClick={handleExportPDF}
