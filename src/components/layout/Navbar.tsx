@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./Navbar.module.css";
 
@@ -9,7 +9,9 @@ const navLinks = ["Features", "Templates", "Pricing", "About"];
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<{ email?: string; user_metadata?: { full_name?: string } } | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const router = useRouter();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -28,9 +30,32 @@ export default function Navbar() {
     });
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
   const initials = user?.user_metadata?.full_name
     ? user.user_metadata.full_name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()
     : user?.email?.[0]?.toUpperCase() ?? "U";
+
+  const displayName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User";
+
+  const handleSignOut = async () => {
+    const { createClient } = await import("@/lib/supabase/client");
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    setUser(null);
+    setDropdownOpen(false);
+    router.push("/");
+    router.refresh();
+  };
 
   return (
     <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ""}`}>
@@ -50,22 +75,54 @@ export default function Navbar() {
       {/* Actions */}
       <div className={styles.navActions}>
         {user ? (
-          <>
-            <button className={styles.btnOutline} id="nav-dashboard-btn"
-              onClick={() => router.push("/dashboard")}>
+          <div className={styles.userMenu} ref={dropdownRef}>
+            <button
+              className={styles.btnOutline}
+              id="nav-dashboard-btn"
+              onClick={() => router.push("/dashboard")}
+            >
               Dashboard
             </button>
-            <div title={user.email}
-              style={{
-                width: 36, height: 36, borderRadius: "50%",
-                background: "linear-gradient(135deg, #8b5cf6, #0ea5e9)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: "0.8rem", fontWeight: 700, color: "#fff", cursor: "pointer",
-              }}
-              onClick={() => router.push("/dashboard")}>
+            {/* Avatar with dropdown */}
+            <button
+              className={styles.avatarBtn}
+              onClick={() => setDropdownOpen((p) => !p)}
+              id="nav-avatar-btn"
+              title={user.email}
+            >
               {initials}
-            </div>
-          </>
+            </button>
+
+            {dropdownOpen && (
+              <div className={styles.dropdown} id="user-dropdown">
+                <div className={styles.dropdownHeader}>
+                  <div className={styles.dropdownName}>{displayName}</div>
+                  <div className={styles.dropdownEmail}>{user.email}</div>
+                </div>
+                <div className={styles.dropdownDivider} />
+                <button
+                  className={styles.dropdownItem}
+                  onClick={() => { setDropdownOpen(false); router.push("/dashboard"); }}
+                >
+                  📊 Dashboard
+                </button>
+                <button
+                  className={styles.dropdownItem}
+                  onClick={() => { setDropdownOpen(false); router.push("/builder"); }}
+                >
+                  ✦ New Resume
+                </button>
+                <div className={styles.dropdownDivider} />
+                <button
+                  className={`${styles.dropdownItem} ${styles.dropdownSignOut}`}
+                  onClick={handleSignOut}
+                  id="nav-sign-out-btn"
+                >
+                  ↪ Sign Out
+                </button>
+              </div>
+            )}
+          </div>
         ) : (
           <>
             <button className={styles.btnOutline} id="nav-login-btn"

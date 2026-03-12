@@ -42,7 +42,7 @@ export default function BuilderPage() {
     addExperience, updateExperience, deleteExperience,
     addEducation, updateEducation, deleteEducation,
     addProject, updateProject, deleteProject,
-  } = useResumeData();
+  } = useResumeData(resumeId ? undefined : emptyData);
 
   const [activeTab, setActiveTab] = useState<FormSection>("personal");
   const [activeTemplate, setActiveTemplate] = useState<TemplateId>("minimalist");
