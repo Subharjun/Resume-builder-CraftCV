@@ -7,6 +7,7 @@ import { TemplateId, FormSection } from "@/types/resume";
 import MinimalistTemplate from "@/components/builder/templates/MinimalistTemplate";
 import ExecutiveTemplate from "@/components/builder/templates/ExecutiveTemplate";
 import CreativeTemplate, { CreativeStyle, defaultCreativeStyle } from "@/components/builder/templates/CreativeTemplate";
+import ProfessionalTemplate from "@/components/builder/templates/ProfessionalTemplate";
 import TemplateGallery from "@/components/builder/TemplateGallery";
 import PersonalInfoForm from "@/components/builder/sections/PersonalInfoForm";
 import SummaryForm from "@/components/builder/sections/SummaryForm";
@@ -23,10 +24,12 @@ const TABS: { id: FormSection; label: string; icon: string }[] = [
   { id: "education", label: "Education", icon: "🎓" },
   { id: "skills", label: "Skills", icon: "⚡" },
   { id: "projects", label: "Projects", icon: "🚀" },
+  { id: "custom", label: "Sections", icon: "➕" },
 ];
 
 const TEMPLATES: { id: TemplateId; label: string; locked?: boolean }[] = [
   { id: "minimalist", label: "Minimalist" },
+  { id: "professional", label: "Professional Pro" },
   { id: "executive", label: "Executive" },
   { id: "creative", label: "✦ Creative", locked: true },
 ];
@@ -45,6 +48,7 @@ export default function BuilderPage() {
     addExperience, updateExperience, deleteExperience,
     addEducation, updateEducation, deleteEducation,
     addProject, updateProject, deleteProject,
+    addCustomSection, updateCustomSection, removeCustomSection
   } = useResumeData(resumeId ? undefined : emptyData);
 
   const [activeTab, setActiveTab] = useState<FormSection>("personal");
@@ -272,6 +276,28 @@ export default function BuilderPage() {
       case "education": return <EducationForm items={data.education} onAdd={addEducation} onUpdate={updateEducation} onDelete={deleteEducation} />;
       case "skills": return <SkillsForm skills={data.skills} jobTitle={data.personalInfo.title} onChange={updateSkills} />;
       case "projects": return <ProjectsForm items={data.projects} onAdd={addProject} onUpdate={updateProject} onDelete={deleteProject} />;
+      case "custom": return (
+        <div className={styles.customSectionsList}>
+          <h3 className={styles.panelTitle}>Section Manager</h3>
+          <p className={styles.panelSub}>Add custom blocks like Achievements, Languages, or Certifications.</p>
+          <button className={styles.upgradeBtn} style={{marginTop: 15}} onClick={() => { addCustomSection("NEW SECTION"); setActiveTab("custom"); }}>
+            + Add New Block
+          </button>
+          <div style={{marginTop: 20}}>
+            {data.customSections.map(s => (
+              <div key={s.id} className={styles.customSectionItem}>
+                <input 
+                  className={styles.titleInput} 
+                  style={{fontSize: '0.9rem', marginBottom: 5}}
+                  value={s.title} 
+                  onChange={(e) => updateCustomSection(s.id, { title: e.target.value })} 
+                />
+                <button className={styles.deleteBtn} onClick={() => removeCustomSection(s.id)}>Remove</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
     }
   };
 
@@ -354,8 +380,12 @@ export default function BuilderPage() {
 
       {/* ── Body ── */}
       <div className={styles.body}>
-        {/* Left: Form Panel */}
+        {/* Left: AI/Tools Panel */}
         <div className={styles.formPanel}>
+          <div className={styles.panelHeader}>
+            <span className={styles.panelTitle}>✦ AI ASSISTANT</span>
+            <span className={styles.panelSub}>Generate content, then edit directly on the page.</span>
+          </div>
           <div className={styles.formTabs}>
             {TABS.map((tab) => (
               <button
@@ -374,18 +404,68 @@ export default function BuilderPage() {
           </div>
         </div>
 
-        {/* Right: Preview Panel */}
+        {/* Right: Preview Panel (Now with direct editing) */}
         <div className={styles.previewPanel}>
-          <span className={styles.previewLabel}>
-            Live Preview — {activeTemplate.charAt(0).toUpperCase() + activeTemplate.slice(1)}
-          </span>
+          <div className={styles.previewHeader}>
+            <span className={styles.previewLabel}>
+              {activeTemplate.charAt(0).toUpperCase() + activeTemplate.slice(1)} Portfolio
+            </span>
+            <div className={styles.editIndicator}>✨ Direct Edit Mode Active</div>
+          </div>
           <div className={styles.previewPaper} id="resume-preview">
             {activeTemplate === "minimalist" ? (
-              <MinimalistTemplate data={data} />
+              <MinimalistTemplate 
+                data={data} 
+                updatePersonalInfo={updatePersonalInfo}
+                updateSummary={updateSummary}
+                updateExperience={updateExperience}
+                updateEducation={updateEducation}
+                updateProject={updateProject}
+                updateSkills={updateSkills}
+                updateCustomSection={updateCustomSection}
+                addCustomSection={addCustomSection}
+                removeCustomSection={removeCustomSection}
+              />
+            ) : activeTemplate === "professional" ? (
+               <ProfessionalTemplate 
+                data={data} 
+                updatePersonalInfo={updatePersonalInfo}
+                updateSummary={updateSummary}
+                updateExperience={updateExperience}
+                updateEducation={updateEducation}
+                updateProject={updateProject}
+                updateSkills={updateSkills}
+                updateCustomSection={updateCustomSection}
+                addCustomSection={addCustomSection}
+                removeCustomSection={removeCustomSection}
+               />
             ) : activeTemplate === "executive" ? (
-              <ExecutiveTemplate data={data} />
+              <ExecutiveTemplate 
+                data={data} 
+                updatePersonalInfo={updatePersonalInfo}
+                updateSummary={updateSummary}
+                updateExperience={updateExperience}
+                updateEducation={updateEducation}
+                updateProject={updateProject}
+                updateSkills={updateSkills}
+                updateCustomSection={updateCustomSection}
+                addCustomSection={addCustomSection}
+                removeCustomSection={removeCustomSection}
+              />
             ) : (
-              <CreativeTemplate data={data} style={creativeStyle} />
+                <CreativeTemplate 
+                  data={data} 
+                  style={creativeStyle}
+                  updatePersonalInfo={updatePersonalInfo}
+                  updateSummary={updateSummary}
+                  updateExperience={updateExperience}
+                  updateEducation={updateEducation}
+                  updateProject={updateProject}
+                  updateSkills={updateSkills}
+                  updateCustomSection={updateCustomSection}
+                  addCustomSection={addCustomSection}
+                  removeCustomSection={removeCustomSection}
+                />
             )}
           </div>
         </div>

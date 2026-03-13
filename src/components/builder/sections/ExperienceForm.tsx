@@ -33,79 +33,48 @@ export default function ExperienceForm({ items, onAdd, onUpdate, onDelete }: Pro
 
   return (
     <div className={s.section}>
-      <p className={s.sectionSubheading}>
-        Add your work history. Use bullet points for impact.
-      </p>
+      <div className={s.aiSection} style={{ marginBottom: 20 }}>
+        <div className={s.aiLogo}>✦</div>
+        <h3 className={s.aiTitle}>Experience Optimizer</h3>
+        <p className={s.aiDesc}>Click 'Improve' on any card to rewrite bullets with metric-driven impact.</p>
+        <button className={s.addBtn} onClick={onAdd} id="add-experience-btn">
+          + Add New Experience
+        </button>
+      </div>
 
       {items.map((exp, idx) => (
         <div key={exp.id} className={s.entryCard}>
           <div className={s.entryCardHeader}>
             <span className={s.entryCardTitle}>
-              {exp.role || exp.company || `Experience ${idx + 1}`}
+              {exp.role || exp.company || `Position ${idx + 1}`}
             </span>
             <button className={s.deleteBtn} onClick={() => onDelete(exp.id)}>
-              Remove
+              Delete
             </button>
           </div>
 
           <div className={s.row}>
-            <div className={s.field}>
-              <label className={s.label}>Company</label>
-              <input className={s.input} value={exp.company} placeholder="Acme Inc."
-                onChange={(e) => onUpdate(exp.id, { company: e.target.value })} />
-            </div>
-            <div className={s.field}>
-              <label className={s.label}>Role / Title</label>
-              <input className={s.input} value={exp.role} placeholder="Software Engineer"
-                onChange={(e) => onUpdate(exp.id, { role: e.target.value })} />
-            </div>
-          </div>
-
-          <div className={s.row}>
-            <div className={s.field}>
-              <label className={s.label}>Start Date</label>
-              <input className={s.input} value={exp.startDate} placeholder="Jan 2022"
-                onChange={(e) => onUpdate(exp.id, { startDate: e.target.value })} />
-            </div>
-            <div className={s.field}>
-              <label className={s.label}>End Date</label>
-              <input className={s.input} value={exp.endDate} placeholder="Dec 2023"
-                disabled={exp.current}
-                onChange={(e) => onUpdate(exp.id, { endDate: e.target.value })} />
-            </div>
-          </div>
-
-          <label className={s.checkboxRow}>
-            <input type="checkbox" checked={exp.current}
-              onChange={(e) => onUpdate(exp.id, { current: e.target.checked })} />
-            Currently working here
-          </label>
-
-          <div className={s.field}>
-            <label className={s.label}>Description</label>
-            <textarea className={s.textarea} value={exp.description}
-              placeholder={"• Led a team of 5 engineers...\n• Reduced load time by 40%..."}
-              onChange={(e) => onUpdate(exp.id, { description: e.target.value })} />
+            <input className={s.input} value={exp.company} placeholder="Company"
+              onChange={(e) => onUpdate(exp.id, { company: e.target.value })} />
+            <input className={s.input} value={exp.role} placeholder="Role"
+              onChange={(e) => onUpdate(exp.id, { role: e.target.value })} />
           </div>
 
           <button
-            className={s.aiBtn}
+            className={s.aiActionBtn}
             disabled={loadingId === exp.id}
             onClick={() => improveWithAI(exp)}
-            id={`ai-experience-${exp.id}`}
           >
-            {loadingId === exp.id ? (
-              <><span className={s.aiSpinner} /> Improving...</>
-            ) : (
-              <> ✦ Improve with AI</>
-            )}
+            {loadingId === exp.id ? "Optimizing..." : "✦ AI Improve Bullets"}
           </button>
         </div>
       ))}
 
-      <button className={s.addBtn} onClick={onAdd} id="add-experience-btn">
-        + Add Experience
-      </button>
+      {items.length === 0 && (
+         <p style={{ textAlign: 'center', color: 'var(--text-dim)', fontSize: '0.85rem', marginTop: 20 }}>
+           No experience added yet. Add some to see AI magic.
+         </p>
+      )}
     </div>
   );
 }

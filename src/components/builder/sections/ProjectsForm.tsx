@@ -1,4 +1,3 @@
-"use client";
 import { Project } from "@/types/resume";
 import s from "./FormSections.module.css";
 
@@ -12,49 +11,42 @@ interface Props {
 export default function ProjectsForm({ items, onAdd, onUpdate, onDelete }: Props) {
   return (
     <div className={s.section}>
-      <p className={s.sectionSubheading}>Showcase your best work and side projects.</p>
+      <div className={s.aiSection} style={{ marginBottom: 20 }}>
+        <div className={s.aiLogo}>✦</div>
+        <h3 className={s.aiTitle}>Project Lab</h3>
+        <p className={s.aiDesc}>Showcase your builds. Manage titles and tech here, edits on page.</p>
+        <button className={s.addBtn} onClick={onAdd} id="add-project-btn">
+          + Add New Project
+        </button>
+      </div>
 
       {items.map((proj, idx) => (
         <div key={proj.id} className={s.entryCard}>
           <div className={s.entryCardHeader}>
             <span className={s.entryCardTitle}>{proj.name || `Project ${idx + 1}`}</span>
             <button className={s.deleteBtn} onClick={() => onDelete(proj.id)}>
-              Remove
+              Delete
             </button>
           </div>
 
           <div className={s.row}>
-            <div className={s.field}>
-              <label className={s.label}>Project Name</label>
-              <input className={s.input} value={proj.name} placeholder="CraftCV"
+            <input className={s.input} value={proj.name} placeholder="Project Name"
                 onChange={(e) => onUpdate(proj.id, { name: e.target.value })} />
-            </div>
-            <div className={s.field}>
-              <label className={s.label}>URL (Optional)</label>
-              <input className={s.input} value={proj.url ?? ""} placeholder="github.com/you/project"
+            <input className={s.input} value={proj.url ?? ""} placeholder="Live Link"
                 onChange={(e) => onUpdate(proj.id, { url: e.target.value })} />
-            </div>
           </div>
 
-          <div className={s.field}>
-            <label className={s.label}>Technologies Used</label>
-            <input className={s.input} value={proj.technologies}
-              placeholder="Next.js, TypeScript, Supabase..."
-              onChange={(e) => onUpdate(proj.id, { technologies: e.target.value })} />
-          </div>
-
-          <div className={s.field}>
-            <label className={s.label}>Description</label>
-            <textarea className={s.textarea} value={proj.description}
-              placeholder="Describe what the project does and your impact..."
-              onChange={(e) => onUpdate(proj.id, { description: e.target.value })} />
-          </div>
+          <input className={s.input} value={proj.technologies}
+            placeholder="Tech Stack (e.g. React, Node.js)"
+            onChange={(e) => onUpdate(proj.id, { technologies: e.target.value })} />
         </div>
       ))}
 
-      <button className={s.addBtn} onClick={onAdd} id="add-project-btn">
-        + Add Project
-      </button>
+      {items.length === 0 && (
+         <p style={{ textAlign: 'center', color: 'var(--text-dim)', fontSize: '0.85rem', marginTop: 20 }}>
+           No projects added. Start showcasing your work!
+         </p>
+      )}
     </div>
   );
 }

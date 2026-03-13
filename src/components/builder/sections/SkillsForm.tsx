@@ -9,7 +9,6 @@ interface Props {
 }
 
 export default function SkillsForm({ skills: propSkills, jobTitle, onChange }: Props) {
-  // Defensive check: ensure skills is an array
   const skills = Array.isArray(propSkills) 
     ? propSkills 
     : typeof propSkills === 'string' 
@@ -66,43 +65,34 @@ export default function SkillsForm({ skills: propSkills, jobTitle, onChange }: P
 
   return (
     <div className={s.section}>
-      <p className={s.sectionSubheading}>
-        Type a skill and press Enter or comma to add it.
-      </p>
+      <div className={s.aiSection} style={{ marginBottom: 20 }}>
+        <div className={s.aiLogo}>✦</div>
+        <h3 className={s.aiTitle}>Skill Strategist</h3>
+        <p className={s.aiDesc}>Discover trending skills for your role using Groq AI analytics.</p>
+        <button className={s.aiActionBtn} onClick={generateSkillsAI} disabled={loading} id="ai-skills-btn">
+          {loading ? "Analyzing..." : "✦ Suggest Skills for " + (jobTitle || "Your Role")}
+        </button>
+      </div>
 
       <div className={s.skillsInputRow}>
         <input
           className={s.input}
           value={input}
-          placeholder="e.g. React, Node.js, Python..."
+          placeholder="Type skill & press Enter..."
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKey}
           id="skills-input"
         />
-        <button className={s.addBtn} onClick={addSkill}
-          style={{ width: "auto", padding: "10px 18px", borderStyle: "solid" }}>
-          Add
-        </button>
       </div>
 
-      {skills.length > 0 && (
-        <div className={s.skillsWrap}>
-          {skills.map((skill) => (
-            <span key={skill} className={s.skillTag}>
-              {skill}
-              <button className={s.skillRemove} onClick={() => removeSkill(skill)}>×</button>
-            </span>
-          ))}
-        </div>
-      )}
-
-      <button className={s.aiBtn} onClick={generateSkillsAI} disabled={loading} id="ai-skills-btn">
-        {loading ? (
-          <><span className={s.aiSpinner} /> Suggesting...</>
-        ) : (
-          <> ✦ Suggest Skills with AI</>
-        )}
-      </button>
+      <div className={s.skillsWrap}>
+        {skills.map((skill) => (
+          <span key={skill} className={s.skillTag}>
+            {skill}
+            <button className={s.skillRemove} onClick={() => removeSkill(skill)}>×</button>
+          </span>
+        ))}
+      </div>
     </div>
   );
 }

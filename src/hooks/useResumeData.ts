@@ -24,9 +24,11 @@ export const emptyData: ResumeData = {
   education: [],
   skills: [],
   projects: [],
+  customSections: [],
 };
 
 const defaultData: ResumeData = {
+  // ... existing personalInfo, summary, experience, education, skills, projects
   personalInfo: {
     fullName: "Alex Johnson",
     email: "alex@example.com",
@@ -37,7 +39,7 @@ const defaultData: ResumeData = {
     title: "Full Stack Engineer",
   },
   summary:
-    "Passionate and results-driven Full Stack Engineer with 4+ years of experience building scalable web applications. Adept at React, Node.js, and cloud infrastructure. I turn complex problems into elegant solutions.",
+    "Passionate and results-driven Full Stack Engineer with 4+ years of experience building scalable web applications. Adept at React, Node.js, and cloud infrastructure.",
   experience: [
     {
       id: "exp-1",
@@ -47,30 +49,28 @@ const defaultData: ResumeData = {
       endDate: "",
       current: true,
       description:
-        "• Led development of a customer-facing dashboard serving 200K+ daily users, reducing load time by 40%.\n• Architected microservices migration from monolith, improving deployment frequency by 3x.\n• Mentored a team of 5 junior engineers.",
+        "• Led development of a customer-facing dashboard serving 200K+ daily users.\n• Architected microservices migration from monolith.",
     },
   ],
   education: [
     {
       id: "edu-1",
-      institution: "University of California, Berkeley",
+      institution: "UC Berkeley",
       degree: "B.Tech",
       field: "Computer Science",
-      startDate: "Aug 2018",
-      endDate: "May 2022",
+      startDate: "2018",
+      endDate: "2022",
       gpa: "3.8",
     },
   ],
-  skills: ["React", "TypeScript", "Node.js", "PostgreSQL", "AWS", "Docker", "Next.js", "Python"],
-  projects: [
+  skills: ["React", "TypeScript", "Node.js", "PostgreSQL", "AWS"],
+  projects: [],
+  customSections: [
     {
-      id: "proj-1",
-      name: "CraftCV",
-      description:
-        "An AI-powered resume builder that helps job seekers create stunning resumes in minutes using Groq AI and modern web technologies.",
-      url: "craftcv.dev",
-      technologies: "Next.js, TypeScript, Supabase, Groq AI",
-    },
+      id: "cust-1",
+      title: "ACHIEVEMENTS",
+      content: "<ul><li><b>Hack4Bengal 4.0</b>: Secured top 10 position out of 500+ teams.</li><li><b>AWS Certified</b>: Designing Blockchain Solutions.</li></ul>"
+    }
   ],
 };
 
@@ -197,6 +197,35 @@ export function useResumeData(initialData?: ResumeData) {
     }));
   }, []);
 
+  // Custom Sections
+  const addCustomSection = useCallback((title: string = "NEW SECTION") => {
+    const newSec = {
+      id: generateId(),
+      title,
+      content: "",
+    };
+    setData((prev) => ({
+      ...prev,
+      customSections: [...prev.customSections, newSec],
+    }));
+  }, []);
+
+  const updateCustomSection = useCallback((id: string, updates: Partial<any>) => {
+    setData((prev) => ({
+      ...prev,
+      customSections: prev.customSections.map((s) =>
+        s.id === id ? { ...s, ...updates } : s
+      ),
+    }));
+  }, []);
+
+  const removeCustomSection = useCallback((id: string) => {
+    setData((prev) => ({
+      ...prev,
+      customSections: prev.customSections.filter((s) => s.id !== id),
+    }));
+  }, []);
+
   return {
     data,
     loadData,
@@ -212,5 +241,8 @@ export function useResumeData(initialData?: ResumeData) {
     addProject,
     updateProject,
     deleteProject,
+    addCustomSection,
+    updateCustomSection,
+    removeCustomSection,
   };
 }

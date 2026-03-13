@@ -36,6 +36,12 @@ export interface Project {
   technologies: string;
 }
 
+export interface CustomSection {
+  id: string;
+  title: string;
+  content: string; // Rich Text HTML
+}
+
 export interface ResumeData {
   personalInfo: PersonalInfo;
   summary: string;
@@ -43,9 +49,11 @@ export interface ResumeData {
   education: Education[];
   skills: string[];
   projects: Project[];
+  customSections: CustomSection[];
+  sectionOrder?: string[]; // IDs or keys of sections
 }
 
-export type TemplateId = "minimalist" | "executive" | "creative";
+export type TemplateId = "minimalist" | "executive" | "creative" | "professional";
 
 export type FormSection =
   | "personal"
@@ -53,4 +61,18 @@ export type FormSection =
   | "experience"
   | "education"
   | "skills"
-  | "projects";
+  | "projects"
+  | "custom";
+
+export interface TemplateProps {
+  data: ResumeData;
+  updatePersonalInfo: (info: Partial<PersonalInfo>) => void;
+  updateSummary: (summary: string) => void;
+  updateExperience: (id: string, updates: Partial<Experience>) => void;
+  updateEducation: (id: string, updates: Partial<Education>) => void;
+  updateProject: (id: string, updates: Partial<Project>) => void;
+  updateSkills: (skills: string[]) => void;
+  updateCustomSection: (id: string, updates: Partial<CustomSection>) => void;
+  addCustomSection: (title: string) => void;
+  removeCustomSection: (id: string) => void;
+}

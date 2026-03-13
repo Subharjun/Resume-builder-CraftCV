@@ -218,12 +218,32 @@
 
 /* Left Form Panel */
 .formPanel {
-  width: 400px;
+  width: 440px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   border-right: 1px solid rgba(255,255,255,0.07);
   overflow: hidden;
+}
+
+.panelHeader {
+  padding: 24px 24px 16px;
+  background: linear-gradient(to bottom, rgba(139,92,246,0.05), transparent);
+}
+
+.panelTitle {
+  display: block;
+  font-family: var(--font-outfit), sans-serif;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.panelSub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 .formTabs {
@@ -293,8 +313,30 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 32px 24px;
-  gap: 16px;
+  padding: 0 24px 64px;
+}
+
+.previewHeader {
+  width: 100%;
+  max-width: 794px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.editIndicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #6d28d9;
+  background: rgba(139, 92, 246, 0.1);
+  padding: 4px 12px;
+  border-radius: 100px;
+  border: 1px solid rgba(139, 92, 246, 0.15);
 }
 
 .previewPaper {
@@ -552,4 +594,24 @@
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
+}
+
+/* Custom Sections */
+.customSectionsList {
+  display: flex;
+  flex-direction: column;
+}
+
+.customSectionItem {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s;
+}
+
+.customSectionItem:hover {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.05);
 }

@@ -1,9 +1,6 @@
-import { ResumeData } from "@/types/resume";
+import { TemplateProps } from "@/types/resume";
 import styles from "./ExecutiveTemplate.module.css";
-
-interface Props {
-  data: ResumeData;
-}
+import InlineEdit from "../InlineEdit";
 
 function getInitials(name: string) {
   return name
@@ -14,7 +11,15 @@ function getInitials(name: string) {
     .toUpperCase();
 }
 
-export default function ExecutiveTemplate({ data }: Props) {
+export default function ExecutiveTemplate({ 
+  data, 
+  updatePersonalInfo, 
+  updateSummary, 
+  updateExperience, 
+  updateEducation, 
+  updateProject,
+  updateSkills
+}: TemplateProps) {
   const { personalInfo: p, summary, experience, education, skills: propSkills, projects } = data;
   const skills: string[] = Array.isArray(propSkills) 
     ? propSkills 
@@ -30,41 +35,51 @@ export default function ExecutiveTemplate({ data }: Props) {
           <div className={styles.avatar}>
             {getInitials(p.fullName || "YN")}
           </div>
-          <div className={styles.sidebarName}>{p.fullName || "Your Name"}</div>
-          {p.title && <div className={styles.sidebarTitle}>{p.title}</div>}
+          <InlineEdit
+            className={styles.sidebarName}
+            value={p.fullName || "Your Name"}
+            onChange={(v) => updatePersonalInfo({ fullName: v })}
+          />
+          <InlineEdit
+            className={styles.sidebarTitle}
+            value={p.title || "Job Title"}
+            onChange={(v) => updatePersonalInfo({ title: v })}
+          />
         </div>
 
         <div className={styles.sidebarSection}>
           <div className={styles.sidebarSectionTitle}>Contact</div>
-          {p.email && <div className={styles.sidebarItem}>✉ {p.email}</div>}
-          {p.phone && <div className={styles.sidebarItem}>✆ {p.phone}</div>}
-          {p.location && <div className={styles.sidebarItem}>⌖ {p.location}</div>}
-          {p.website && <div className={styles.sidebarItem}>⊕ {p.website}</div>}
-          {p.linkedin && <div className={styles.sidebarItem}>in {p.linkedin}</div>}
+          <div className={styles.sidebarItem}>✉ <InlineEdit value={p.email} onChange={(v) => updatePersonalInfo({ email: v })} placeholder="Email" /></div>
+          <div className={styles.sidebarItem}>✆ <InlineEdit value={p.phone} onChange={(v) => updatePersonalInfo({ phone: v })} placeholder="Phone" /></div>
+          <div className={styles.sidebarItem}>⌖ <InlineEdit value={p.location} onChange={(v) => updatePersonalInfo({ location: v })} placeholder="Location" /></div>
+          <div className={styles.sidebarItem}>⊕ <InlineEdit value={p.website} onChange={(v) => updatePersonalInfo({ website: v })} placeholder="Website" /></div>
         </div>
 
-        {skills.length > 0 && (
-          <div className={styles.sidebarSection}>
-            <div className={styles.sidebarSectionTitle}>Skills</div>
-            {skills.map((skill, i) => (
-              <div key={i} className={styles.sidebarSkill}>
-                <span className={styles.skillDot} />
-                {skill}
-              </div>
-            ))}
-          </div>
-        )}
+        <div className={styles.sidebarSection}>
+          <div className={styles.sidebarSectionTitle}>Skills</div>
+          <InlineEdit
+            multiline
+            className={styles.sidebarSkill}
+            value={skills.join(", ")}
+            onChange={(v) => updateSkills(v.split(",").map(sk => sk.trim()).filter(Boolean))}
+            placeholder="React, CSS, SQL..."
+          />
+        </div>
       </div>
 
       {/* Main Content */}
       <div className={styles.main}>
         {/* Summary */}
-        {summary && (
-          <div className={styles.mainSection}>
-            <div className={styles.sectionTitle}>Profile</div>
-            <p className={styles.summaryText}>{summary}</p>
-          </div>
-        )}
+        <div className={styles.mainSection}>
+          <div className={styles.sectionTitle}>Profile</div>
+          <InlineEdit
+            multiline
+            className={styles.summaryText}
+            value={summary}
+            onChange={updateSummary}
+            placeholder="Write your profile summary..."
+          />
+        </div>
 
         {/* Experience */}
         {experience.length > 0 && (
@@ -73,16 +88,29 @@ export default function ExecutiveTemplate({ data }: Props) {
             {experience.map((exp) => (
               <div key={exp.id} className={styles.entry}>
                 <div className={styles.entryTop}>
-                  <span className={styles.entryTitle}>{exp.role || "Role"}</span>
-                  <span className={styles.entryDates}>
-                    {exp.startDate}{exp.startDate && " – "}
-                    {exp.current ? "Present" : exp.endDate}
-                  </span>
+                  <InlineEdit
+                    className={styles.entryTitle}
+                    value={exp.role || "Role"}
+                    onChange={(v) => updateExperience(exp.id, { role: v })}
+                  />
+                  <div className={styles.entryDates}>
+                    <InlineEdit value={exp.startDate} onChange={(v) => updateExperience(exp.id, { startDate: v })} placeholder="Start" />
+                    {" – "}
+                    <InlineEdit value={exp.current ? "Present" : exp.endDate} onChange={(v) => updateExperience(exp.id, { endDate: v, current: v.toLowerCase() === 'present' })} placeholder="End" />
+                  </div>
                 </div>
-                <div className={styles.entrySubtitle}>{exp.company}</div>
-                {exp.description && (
-                  <div className={styles.entryDesc}>{exp.description}</div>
-                )}
+                <InlineEdit
+                  className={styles.entrySubtitle}
+                  value={exp.company || "Company"}
+                  onChange={(v) => updateExperience(exp.id, { company: v })}
+                />
+                <InlineEdit
+                  multiline
+                  className={styles.entryDesc}
+                  value={exp.description}
+                  onChange={(v) => updateExperience(exp.id, { description: v })}
+                  placeholder="Describe your role..."
+                />
               </div>
             ))}
           </div>
@@ -95,14 +123,23 @@ export default function ExecutiveTemplate({ data }: Props) {
             {education.map((edu) => (
               <div key={edu.id} className={styles.entry}>
                 <div className={styles.entryTop}>
-                  <span className={styles.entryTitle}>{edu.institution}</span>
-                  <span className={styles.entryDates}>
-                    {edu.startDate}{edu.startDate && " – "}{edu.endDate}
-                  </span>
+                  <InlineEdit
+                    className={styles.entryTitle}
+                    value={edu.institution || "Institution"}
+                    onChange={(v) => updateEducation(edu.id, { institution: v })}
+                  />
+                  <div className={styles.entryDates}>
+                    <InlineEdit value={edu.startDate} onChange={(v) => updateEducation(edu.id, { startDate: v })} placeholder="Start" />
+                    {" – "}
+                    <InlineEdit value={edu.endDate} onChange={(v) => updateEducation(edu.id, { endDate: v })} placeholder="End" />
+                  </div>
                 </div>
                 <div className={styles.entrySubtitle}>
-                  {edu.degree}{edu.field && `, ${edu.field}`}
-                  {edu.gpa && ` · GPA: ${edu.gpa}`}
+                  <InlineEdit value={edu.degree || ""} onChange={(v) => updateEducation(edu.id, { degree: v })} placeholder="Degree" />
+                  {", "}
+                  <InlineEdit value={edu.field || ""} onChange={(v) => updateEducation(edu.id, { field: v })} placeholder="Field" />
+                  {edu.gpa && " · GPA: "}
+                  <InlineEdit value={edu.gpa || ""} onChange={(v) => updateEducation(edu.id, { gpa: v })} placeholder="3.8" />
                 </div>
               </div>
             ))}
@@ -116,15 +153,28 @@ export default function ExecutiveTemplate({ data }: Props) {
             {projects.map((proj) => (
               <div key={proj.id} className={styles.entry}>
                 <div className={styles.entryTop}>
-                  <span className={styles.entryTitle}>{proj.name}</span>
+                  <InlineEdit
+                    className={styles.entryTitle}
+                    value={proj.name || "Project Name"}
+                    onChange={(v) => updateProject(proj.id, { name: v })}
+                  />
                 </div>
-                {proj.url && <div className={styles.projUrl}>{proj.url}</div>}
-                {proj.description && (
-                  <div className={styles.entryDesc}>{proj.description}</div>
-                )}
-                {proj.technologies && (
-                  <div className={styles.projTech}>Tech: {proj.technologies}</div>
-                )}
+                <InlineEdit
+                  className={styles.projUrl}
+                  value={proj.url || ""}
+                  onChange={(v) => updateProject(proj.id, { url: v })}
+                  placeholder="URL"
+                />
+                <InlineEdit
+                  multiline
+                  className={styles.entryDesc}
+                  value={proj.description || ""}
+                  onChange={(v) => updateProject(proj.id, { description: v })}
+                  placeholder="Description"
+                />
+                <div className={styles.projTech}>
+                  Tech: <InlineEdit value={proj.technologies || ""} onChange={(v) => updateProject(proj.id, { technologies: v })} placeholder="React, Node..." />
+                </div>
               </div>
             ))}
           </div>

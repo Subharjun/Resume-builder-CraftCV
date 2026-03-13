@@ -32,12 +32,19 @@ const fontFamilies: Record<string, string> = {
   bold:    "'Outfit', 'Arial Black', sans-serif",
 };
 
-interface Props {
-  data: ResumeData;
-  style?: CreativeStyle;
-}
+import { TemplateProps } from "@/types/resume";
+import InlineEdit from "../InlineEdit";
 
-export default function CreativeTemplate({ data, style = defaultCreativeStyle }: Props) {
+export default function CreativeTemplate({ 
+  data, 
+  style = defaultCreativeStyle,
+  updatePersonalInfo,
+  updateSummary,
+  updateExperience,
+  updateEducation,
+  updateProject,
+  updateSkills
+}: TemplateProps & { style?: CreativeStyle }) {
   const { personalInfo, summary, experience, education, skills, projects } = data;
   const fontFamily = fontFamilies[style.fontStyle] ?? fontFamilies.modern;
   const skillList: string[] = Array.isArray(skills)
@@ -74,37 +81,56 @@ export default function CreativeTemplate({ data, style = defaultCreativeStyle }:
       <div className="cr-wrap">
         {/* Sidebar */}
         <div className="cr-sidebar">
-          <div className="cr-name">{personalInfo.fullName || "Your Name"}</div>
-          <div className="cr-title">{personalInfo.title || "Your Title"}</div>
+          <InlineEdit
+            className="cr-name"
+            value={data.personalInfo.fullName || "Your Name"}
+            onChange={(v) => updatePersonalInfo({ fullName: v })}
+          />
+          <InlineEdit
+            className="cr-title"
+            value={data.personalInfo.title || "Your Title"}
+            onChange={(v) => updatePersonalInfo({ title: v })}
+          />
 
           <div className="cr-side-section">
             <div className="cr-side-label">Contact</div>
-            {personalInfo.email    && <div className="cr-contact-row"><span>✉</span>{personalInfo.email}</div>}
-            {personalInfo.phone    && <div className="cr-contact-row"><span>☎</span>{personalInfo.phone}</div>}
-            {personalInfo.location && <div className="cr-contact-row"><span>⌖</span>{personalInfo.location}</div>}
-            {personalInfo.linkedin && <div className="cr-contact-row"><span>in</span>{personalInfo.linkedin}</div>}
-            {personalInfo.website  && <div className="cr-contact-row"><span>⊕</span>{personalInfo.website}</div>}
+            <div className="cr-contact-row"><span>✉</span><InlineEdit style={{display:'inline'}} value={data.personalInfo.email} onChange={(v) => updatePersonalInfo({ email: v })} placeholder="Email" /></div>
+            <div className="cr-contact-row"><span>☎</span><InlineEdit style={{display:'inline'}} value={data.personalInfo.phone} onChange={(v) => updatePersonalInfo({ phone: v })} placeholder="Phone" /></div>
+            <div className="cr-contact-row"><span>⌖</span><InlineEdit style={{display:'inline'}} value={data.personalInfo.location} onChange={(v) => updatePersonalInfo({ location: v })} placeholder="Location" /></div>
+            <div className="cr-contact-row"><span>in</span><InlineEdit style={{display:'inline'}} value={data.personalInfo.linkedin} onChange={(v) => updatePersonalInfo({ linkedin: v })} placeholder="LinkedIn" /></div>
+            <div className="cr-contact-row"><span>⊕</span><InlineEdit style={{display:'inline'}} value={data.personalInfo.website} onChange={(v) => updatePersonalInfo({ website: v })} placeholder="Website" /></div>
           </div>
 
-          {skillList.length > 0 && (
-            <div className="cr-side-section">
-              <div className="cr-side-label">Skills</div>
-              <div>
-                {skillList.map((sk: string, i: number) => (
-                  <span key={i} className="cr-skill-tag">{sk}</span>
-                ))}
-              </div>
-            </div>
-          )}
+          <div className="cr-side-section">
+            <div className="cr-side-label">Skills</div>
+            <InlineEdit
+              multiline
+              className="cr-skill-tag"
+              style={{ background: 'none', padding: 0, border: 'none', display: 'block' }}
+              value={skillList.join(", ")}
+              onChange={(v) => updateSkills(v.split(",").map(sk => sk.trim()).filter(Boolean))}
+              placeholder="React, CSS..."
+            />
+          </div>
 
-          {education.length > 0 && (
+          {data.education.length > 0 && (
             <div className="cr-side-section">
               <div className="cr-side-label">Education</div>
-              {education.map((edu, i) => (
+              {data.education.map((edu, i) => (
                 <div key={i} style={{ marginBottom: 12 }}>
-                  <div style={{ fontSize: "0.78rem", fontWeight: 700, color: "#fff" }}>{edu.degree} {edu.field}</div>
-                  <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.7)", marginTop: 2 }}>{edu.institution}</div>
-                  <div style={{ fontSize: "0.66rem", color: "rgba(255,255,255,0.5)", marginTop: 2 }}>{edu.startDate} – {edu.endDate}</div>
+                  <div style={{ fontSize: "0.78rem", fontWeight: 700, color: "#fff" }}>
+                     <InlineEdit value={edu.degree || ""} onChange={(v) => updateEducation(edu.id, { degree: v })} placeholder="Degree" />
+                     {" "}
+                     <InlineEdit value={edu.field || ""} onChange={(v) => updateEducation(edu.id, { field: v })} placeholder="Field" />
+                  </div>
+                  <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.7)", marginTop: 2 }}>
+                     <InlineEdit value={edu.institution} onChange={(v) => updateEducation(edu.id, { institution: v })} placeholder="Institution" />
+                  </div>
+                  <div style={{ fontSize: "0.66rem", color: "rgba(255,255,255,0.5)", marginTop: 2 }}>
+                     <InlineEdit value={edu.startDate} onChange={(v) => updateEducation(edu.id, { startDate: v })} placeholder="Start" />
+                     {" – "}
+                     <InlineEdit value={edu.endDate} onChange={(v) => updateEducation(edu.id, { endDate: v })} placeholder="End" />
+                  </div>
                 </div>
               ))}
             </div>
@@ -113,37 +139,77 @@ export default function CreativeTemplate({ data, style = defaultCreativeStyle }:
 
         {/* Main Content */}
         <div className="cr-main">
-          {summary && (
-            <div className="cr-section">
-              <div className="cr-section-title">Profile</div>
-              <div className="cr-sum">{summary}</div>
-            </div>
-          )}
+          <div className="cr-section">
+            <div className="cr-section-title">Profile</div>
+            <InlineEdit
+              multiline
+              className="cr-sum"
+              value={data.summary}
+              onChange={updateSummary}
+              placeholder="Tell your story..."
+            />
+          </div>
 
-          {experience.length > 0 && (
+          {data.experience.length > 0 && (
             <div className="cr-section">
               <div className="cr-section-title">Experience</div>
-              {experience.map((exp, i) => (
+              {data.experience.map((exp, i) => (
                 <div key={i} className="cr-exp-item">
-                  <div className="cr-exp-role">{exp.role}</div>
+                  <InlineEdit
+                    className="cr-exp-role"
+                    value={exp.role}
+                    onChange={(v) => updateExperience(exp.id, { role: v })}
+                    placeholder="Role"
+                  />
                   <div className="cr-exp-meta">
-                    <span className="cr-exp-company">{exp.company}</span>
-                    {exp.startDate && <span>{exp.startDate} – {exp.current ? "Present" : exp.endDate}</span>}
+                    <InlineEdit
+                      className="cr-exp-company"
+                      value={exp.company}
+                      onChange={(v) => updateExperience(exp.id, { company: v })}
+                      placeholder="Company"
+                    />
+                    <span>
+                      <InlineEdit value={exp.startDate} onChange={(v) => updateExperience(exp.id, { startDate: v })} placeholder="Start" />
+                      {" – "}
+                      <InlineEdit value={exp.current ? "Present" : exp.endDate} onChange={(v) => updateExperience(exp.id, { endDate: v, current: v.toLowerCase()==='present' })} placeholder="End" />
+                    </span>
                   </div>
-                  {exp.description && <div className="cr-exp-desc">{exp.description}</div>}
+                  <InlineEdit
+                    multiline
+                    className="cr-exp-desc"
+                    value={exp.description}
+                    onChange={(v) => updateExperience(exp.id, { description: v })}
+                    placeholder="Responsibilities..."
+                  />
                 </div>
               ))}
             </div>
           )}
 
-          {projects.length > 0 && (
+          {data.projects.length > 0 && (
             <div className="cr-section">
               <div className="cr-section-title">Projects</div>
-              {projects.map((proj, i) => (
+              {data.projects.map((proj, i) => (
                 <div key={i} style={{ marginBottom: 14 }}>
-                  <div className="cr-proj-name">{proj.name}</div>
-                  {proj.technologies && <div className="cr-proj-tech">{proj.technologies}</div>}
-                  {proj.description  && <div className="cr-proj-desc">{proj.description}</div>}
+                  <InlineEdit
+                    className="cr-proj-name"
+                    value={proj.name}
+                    onChange={(v) => updateProject(proj.id, { name: v })}
+                    placeholder="Project Name"
+                  />
+                  <InlineEdit
+                    className="cr-proj-tech"
+                    value={proj.technologies}
+                    onChange={(v) => updateProject(proj.id, { technologies: v })}
+                    placeholder="Tech Stack"
+                  />
+                  <InlineEdit
+                    multiline
+                    className="cr-proj-desc"
+                    value={proj.description}
+                    onChange={(v) => updateProject(proj.id, { description: v })}
+                    placeholder="Project details..."
+                  />
                 </div>
               ))}
             </div>
