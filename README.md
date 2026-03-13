@@ -36,8 +36,10 @@
 
 ### 📝 Resume Builder
 - **Live dual-pane layout** — form on the left, real-time PDF preview on the right
-- 6 form sections: Personal Info, Summary, Experience, Education, Skills, Projects
-- **2 professional templates**: Minimalist & Executive (Creative template — Premium locked)
+- **MS Word-like Rich Text Editor** — Tiptap-powered editing with a floating toolbar supporting bold, italic, underline, lists, alignment, and inline **Hyperlinks (🔗)**.
+- **Custom Dynamic Sections** — Users can add their own personalized blocks (e.g., *Certifications*, *Languages*, *Achievements*) directly to the resume via the AI Assistant panel.
+- **3 Professional Templates**: Minimalist, Executive, and the new **Professional Pro** (high-density, academic typography layout). (Creative template — Premium locked)
+- 6 standard form sections: Personal Info, Summary, Experience, Education, Skills, Projects
 - Inline click-to-edit **resume title**
 - **Save to Supabase** — smart insert/update (no duplicates)
 - **Export to PDF** via `html2canvas` + `jsPDF`
@@ -248,16 +250,23 @@ src/
 
 - **Supabase** → Authentication → URL Configuration → Site URL
 
-### 🚀 Deployment (Render)
+### 🚀 Deployment (Render) — Secure & API Key Safe
 
-1. **New Web Service**: Log in to [Render](https://render.com) and create a new **Web Service**.
-2. **Connect Repo**: Connect this GitHub repository.
-3. **Settings**:
+1. **GitHub Warning**: **DO NOT** commit your `.env.local` to GitHub. Ensure it is listed in your `.gitignore`. Your API keys should remain strictly on your local machine and your Render dashboard.
+2. **New Web Service**: Log in to [Render](https://render.com) and create a new **Web Service**.
+3. **Connect Repo**: Connect this GitHub repository.
+4. **Settings**:
    - **Environment**: `Node`
    - **Build Command**: `npm install && npm run build`
    - **Start Command**: `npm run start`
-4. **Environment Variables**: Add all keys from your `.env.local` (e.g., `NEXT_PUBLIC_SUPABASE_URL`, `GROQ_API_KEY`, `SERPAPI_KEY`).
-5. **Advanced**: Render's free tier spins down after inactivity. For production, consider the "Starter" plan.
+5. **Environment Variables (Crucial)**: In the Render dashboard (under the "Environment" tab of your service), add all keys from your local `.env.local` file:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `GROQ_API_KEY`
+   - `SERPAPI_KEY`
+   *(Render securely injects these into your app during build/runtime, keeping them completely safe from the public source code).*
+6. **Advanced**: Render's free tier spins down after inactivity. For production, consider the "Starter" plan for instant wakeups.
+7. **Supabase Redirect**: Once deployed, don't forget to add your new Render URL (e.g., `https://craftcv.onrender.com/auth/callback`) to your **Supabase Authentication -> URL Configuration -> Redirect URLs**.
 
 ---
 
