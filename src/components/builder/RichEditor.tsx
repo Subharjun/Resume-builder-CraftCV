@@ -103,8 +103,13 @@ export default function RichEditor({ value, onChange, placeholder, className }: 
       return;
     }
 
-    const textToInsert = linkText || linkUrl;
-    editor.chain().focus().insertContent(`<a href="${linkUrl}" target="_blank" class="editor-link">${textToInsert}</a>`).run();
+    let finalUrl = linkUrl.trim();
+    if (!/^https?:\/\//i.test(finalUrl) && !/^mailto:/i.test(finalUrl)) {
+      finalUrl = `https://${finalUrl}`;
+    }
+
+    const textToInsert = linkText || finalUrl;
+    editor.chain().focus().insertContent(`<a href="${finalUrl}" target="_blank" class="editor-link">${textToInsert}</a>`).run();
     setShowPrompt(false);
   };
 
@@ -186,8 +191,8 @@ export default function RichEditor({ value, onChange, placeholder, className }: 
               onChange={(e) => setLinkText(e.target.value)} 
             />
             <input 
-              type="url" 
-              placeholder="https://example.com" 
+              type="text" 
+              placeholder="example.com/in/profile" 
               value={linkUrl} 
               onChange={(e) => setLinkUrl(e.target.value)} 
               required
