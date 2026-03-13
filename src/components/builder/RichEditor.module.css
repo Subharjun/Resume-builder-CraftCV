@@ -94,3 +94,68 @@
   text-decoration: underline;
   cursor: pointer;
 }
+
+.linkPrompt {
+  position: absolute;
+  top: -110px;
+  left: 0;
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  border: 1px solid #e2e8f0;
+  z-index: 1001;
+  min-width: 260px;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.linkPrompt form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+}
+
+.linkPrompt input {
+  padding: 6px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  outline: none;
+  font-family: inherit;
+}
+
+.linkPrompt input:focus {
+  border-color: #3b82f6;
+}
+
+.linkPromptButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.linkPromptButtons button {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: none;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.linkPromptButtons button:hover {
+  opacity: 0.8;
+}
+
+.btnCancel {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.btnSave {
+  background: #3b82f6;
+  color: white;
+}

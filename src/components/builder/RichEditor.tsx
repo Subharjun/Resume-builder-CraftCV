@@ -5,7 +5,7 @@ import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import TextAlign from "@tiptap/extension-text-align";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import s from "./RichEditor.module.css";
 
 interface Props {
@@ -18,9 +18,24 @@ interface Props {
 export default function RichEditor({ value, onChange, placeholder, className }: Props) {
   const [isFocused, setIsFocused] = useState(false);
   const [mounted, setMounted] = useState(false);
+  
+  const [showPrompt, setShowPrompt] = useState(false);
+  const [linkText, setLinkText] = useState("");
+  const [linkUrl, setLinkUrl] = useState("");
+  
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
+    
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsFocused(false);
+        setShowPrompt(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const editor = useEditor({
@@ -55,44 +70,55 @@ export default function RichEditor({ value, onChange, placeholder, className }: 
       onChange(editor.getHTML());
     },
     onFocus: () => setIsFocused(true),
-    onBlur: () => setIsFocused(false),
+    // We handle blur manually via the click outside listener to support the link prompt
   });
 
-  const setLink = () => {
+  const openLinkPrompt = () => {
     if (!editor) return;
 
-    if (editor.state.selection.empty) {
-      const text = window.prompt("Text to display:");
-      if (!text) return;
-
-      const url = window.prompt("URL:");
-      if (url === null || url === "") return;
-
-      editor.chain().focus().insertContent(`<a href="${url}" target="_blank" class="editor-link">${text}</a>`).run();
+    if (editor.isActive('link')) {
+      editor.chain().focus().extendMarkRange('link').run();
+      const url = editor.getAttributes("link").href;
+      setLinkUrl(url || "");
+      const selectedText = editor.state.doc.textBetween(editor.state.selection.from, editor.state.selection.to, " ");
+      setLinkText(selectedText || "");
+    } else if (!editor.state.selection.empty) {
+      const selectedText = editor.state.doc.textBetween(editor.state.selection.from, editor.state.selection.to, " ");
+      setLinkText(selectedText);
+      setLinkUrl("");
     } else {
-      const previousUrl = editor.getAttributes("link").href;
-      const url = window.prompt("URL:", previousUrl);
-
-      if (url === null) return;
-      if (url === "") {
-        editor.chain().focus().extendMarkRange("link").unsetLink().run();
-        return;
-      }
-      editor.chain().focus().extendMarkRange("link").setLink({ href: url, target: "_blank" }).run();
+      setLinkText("");
+      setLinkUrl("");
     }
+    setShowPrompt(true);
+  };
+
+  const submitLink = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editor) return;
+
+    if (!linkUrl) {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+      setShowPrompt(false);
+      return;
+    }
+
+    const textToInsert = linkText || linkUrl;
+    editor.chain().focus().insertContent(`<a href="${linkUrl}" target="_blank" class="editor-link">${textToInsert}</a>`).run();
+    setShowPrompt(false);
   };
 
   // Keep in sync with external value changes (e.g. AI generation)
   useEffect(() => {
-    if (editor && value !== editor.getHTML() && !isFocused) {
+    if (editor && value !== editor.getHTML() && !isFocused && !showPrompt) {
       editor.commands.setContent(value);
     }
-  }, [value, editor, isFocused]);
+  }, [value, editor, isFocused, showPrompt]);
 
   if (!mounted || !editor) return null;
 
   return (
-    <div className={`${s.container} ${className || ""}`}>
+    <div ref={containerRef} className={`${s.container} ${className || ""}`}>
       {isFocused && (
         <div className={s.toolbar}>
           <button 
@@ -117,8 +143,8 @@ export default function RichEditor({ value, onChange, placeholder, className }: 
             <u>U</u>
           </button>
           <button 
-            onClick={setLink} 
-            className={editor.isActive("link") ? s.active : ""}
+            onClick={openLinkPrompt} 
+            className={(editor.isActive("link") || showPrompt) ? s.active : ""}
             title="Add Link"
           >
             🔗
@@ -148,6 +174,32 @@ export default function RichEditor({ value, onChange, placeholder, className }: 
           </button>
         </div>
       )}
+      
+      {showPrompt && (
+        <div className={s.linkPrompt}>
+          <form onSubmit={submitLink}>
+            <input 
+              autoFocus
+              type="text" 
+              placeholder="Text to display..." 
+              value={linkText} 
+              onChange={(e) => setLinkText(e.target.value)} 
+            />
+            <input 
+              type="url" 
+              placeholder="https://example.com" 
+              value={linkUrl} 
+              onChange={(e) => setLinkUrl(e.target.value)} 
+              required
+            />
+            <div className={s.linkPromptButtons}>
+               <button type="button" className={s.btnCancel} onClick={() => setShowPrompt(false)}>Cancel</button>
+               <button type="submit" className={s.btnSave}>Save</button>
+            </div>
+          </form>
+        </div>
+      )}
+      
       <EditorContent editor={editor} className={s.content} />
     </div>
   );
