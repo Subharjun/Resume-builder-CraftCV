@@ -617,13 +617,14 @@
 }
 
 /* --- Mobile Responsiveness --- */
+/* --- Mobile Responsiveness --- */
 @media (max-width: 1024px) {
   .body {
     flex-direction: column;
   }
   .formPanel {
     width: 100%;
-    flex: 0 0 50vh; /* take up half the height */
+    flex: 0 0 45vh; /* slightly less than half to prioritize preview */
     border-right: none;
     border-bottom: 3px solid rgba(139, 92, 246, 0.3);
   }
@@ -643,31 +644,48 @@
     flex-wrap: wrap;
     padding: 12px;
     gap: 12px;
+    justify-content: center;
+  }
+  .topBarLeft {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .titleWrap {
+    display: none; 
   }
   .topBarCenter {
     order: 3;
     width: 100%;
     justify-content: flex-start;
-    overflow-x: auto; /* Scrollable templates on mobile */
+    overflow-x: auto;
     padding-bottom: 4px;
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none;
   }
   .topBarCenter::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
-  }
-  .titleWrap {
-    display: none; /* Hide title on very small screens to save space */
+    display: none;
   }
   .topBarRight {
-    gap: 8px;
+    order: 2;
+    width: 100%;
+    justify-content: space-between;
+    gap: 6px;
   }
   .saveBtn, .githubBtn, .exportBtn {
-    padding: 8px 12px;
-    font-size: 0.75rem;
+    padding: 8px 10px;
+    font-size: 0.72rem;
+    flex: 1;
+    justify-content: center;
   }
   .lockedCard {
     max-width: 90vw;
     padding: 32px 20px;
+  }
+  .formTabs {
+    padding: 0 8px;
+  }
+  .tab {
+    padding: 12px 10px;
+    font-size: 0.75rem;
   }
 }
 
