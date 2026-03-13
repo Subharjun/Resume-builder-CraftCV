@@ -53,6 +53,7 @@ export default function BuilderPage() {
 
   const [activeTab, setActiveTab] = useState<FormSection>("personal");
   const [activeTemplate, setActiveTemplate] = useState<TemplateId>("minimalist");
+  const [mobileView, setMobileView] = useState<"form" | "preview">("form");
   const [showLocked, setShowLocked] = useState(false);
   const [isUpgraded, setIsUpgraded] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
@@ -379,7 +380,7 @@ export default function BuilderPage() {
       </div>
 
       {/* ── Body ── */}
-      <div className={styles.body}>
+      <div className={`${styles.body} ${mobileView === 'form' ? styles.bodyShowForm : styles.bodyShowPreview}`}>
         {/* Left: AI/Tools Panel */}
         <div className={styles.formPanel}>
           <div className={styles.panelHeader}>
@@ -470,6 +471,14 @@ export default function BuilderPage() {
           </div>
         </div>
       </div>
+
+      {/* Mobile Toggle Button (Floating Action Button) */}
+      <button 
+        className={styles.mobileToggleBtn}
+        onClick={() => setMobileView(prev => prev === "form" ? "preview" : "form")}
+      >
+        {mobileView === "form" ? "👀 View Resume" : "✏️ Edit Info"}
+      </button>
 
       {/* Upgrade Modal → opens gallery */}
       {showLocked && (
