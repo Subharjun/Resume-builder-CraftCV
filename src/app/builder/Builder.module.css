@@ -615,3 +615,59 @@
   border-color: #8b5cf6;
   background: rgba(139, 92, 246, 0.05);
 }
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 1024px) {
+  .body {
+    flex-direction: column;
+  }
+  .formPanel {
+    width: 100%;
+    flex: 0 0 50vh; /* take up half the height */
+    border-right: none;
+    border-bottom: 3px solid rgba(139, 92, 246, 0.3);
+  }
+  .previewPanel {
+    flex: 1;
+    overflow-x: auto; /* Allow horizontal scrolling for A4 paper */
+    padding: 24px 16px;
+  }
+  .previewPaper {
+    min-width: 794px; /* Maintain A4 width so templates don't break */
+  }
+}
+
+@media (max-width: 768px) {
+  .topBar {
+    height: auto;
+    flex-wrap: wrap;
+    padding: 12px;
+    gap: 12px;
+  }
+  .topBarCenter {
+    order: 3;
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto; /* Scrollable templates on mobile */
+    padding-bottom: 4px;
+    scrollbar-width: none; /* Firefox */
+  }
+  .topBarCenter::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+  .titleWrap {
+    display: none; /* Hide title on very small screens to save space */
+  }
+  .topBarRight {
+    gap: 8px;
+  }
+  .saveBtn, .githubBtn, .exportBtn {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+  .lockedCard {
+    max-width: 90vw;
+    padding: 32px 20px;
+  }
+}
+
