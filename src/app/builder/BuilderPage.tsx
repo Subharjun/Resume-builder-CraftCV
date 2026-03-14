@@ -46,7 +46,8 @@ export default function BuilderPage() {
     addExperience, updateExperience, deleteExperience,
     addEducation, updateEducation, deleteEducation,
     addProject, updateProject, deleteProject,
-    addCustomSection, updateCustomSection, removeCustomSection
+    addCustomSection, updateCustomSection, removeCustomSection,
+    moveSectionItem,
   } = useResumeData(resumeId ? undefined : emptyData);
 
   const [activeTab, setActiveTab] = useState<FormSection>("personal");
@@ -271,10 +272,10 @@ export default function BuilderPage() {
     switch (activeTab) {
       case "personal": return <PersonalInfoForm data={data.personalInfo} onChange={updatePersonalInfo} />;
       case "summary": return <SummaryForm value={data.summary} personalTitle={data.personalInfo.title} onChange={updateSummary} />;
-      case "experience": return <ExperienceForm items={data.experience} onAdd={addExperience} onUpdate={updateExperience} onDelete={deleteExperience} />;
-      case "education": return <EducationForm items={data.education} onAdd={addEducation} onUpdate={updateEducation} onDelete={deleteEducation} />;
+      case "experience": return <ExperienceForm items={data.experience} onAdd={addExperience} onUpdate={updateExperience} onDelete={deleteExperience} onMove={(id, dir) => moveSectionItem("experience", id, dir)} />;
+      case "education": return <EducationForm items={data.education} onAdd={addEducation} onUpdate={updateEducation} onDelete={deleteEducation} onMove={(id, dir) => moveSectionItem("education", id, dir)} />;
       case "skills": return <SkillsForm skills={data.skills} jobTitle={data.personalInfo.title} onChange={updateSkills} />;
-      case "projects": return <ProjectsForm items={data.projects} onAdd={addProject} onUpdate={updateProject} onDelete={deleteProject} />;
+      case "projects": return <ProjectsForm items={data.projects} onAdd={addProject} onUpdate={updateProject} onDelete={deleteProject} onMove={(id, dir) => moveSectionItem("projects", id, dir)} />;
       case "custom": return (
         <div className={styles.customSectionsList}>
           <h3 className={styles.panelTitle}>Section Manager</h3>
@@ -285,6 +286,10 @@ export default function BuilderPage() {
           <div style={{marginTop: 20}}>
             {data.customSections.map(s => (
               <div key={s.id} className={styles.customSectionItem}>
+                <div style={{display: "flex", flexDirection: "column", gap: "2px", marginRight: "8px"}}>
+                   <button className={styles.moveBtn} onClick={() => moveSectionItem("customSections", s.id, "up")}>▲</button>
+                   <button className={styles.moveBtn} onClick={() => moveSectionItem("customSections", s.id, "down")}>▼</button>
+                </div>
                 <input 
                   className={styles.titleInput} 
                   value={s.title} 

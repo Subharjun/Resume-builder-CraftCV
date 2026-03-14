@@ -8,9 +8,10 @@ interface Props {
   onAdd: () => void;
   onUpdate: (id: string, updates: Partial<Experience>) => void;
   onDelete: (id: string) => void;
+  onMove: (id: string, direction: "up" | "down") => void;
 }
 
-export default function ExperienceForm({ items, onAdd, onUpdate, onDelete }: Props) {
+export default function ExperienceForm({ items, onAdd, onUpdate, onDelete, onMove }: Props) {
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
   const improveWithAI = async (exp: Experience) => {
@@ -48,9 +49,13 @@ export default function ExperienceForm({ items, onAdd, onUpdate, onDelete }: Pro
             <span className={s.entryCardTitle}>
               {exp.role || exp.company || `Position ${idx + 1}`}
             </span>
-            <button className={s.deleteBtn} onClick={() => onDelete(exp.id)}>
-              Delete
-            </button>
+            <div style={{display: "flex", gap: "6px"}}>
+              <button className={s.moveBtn} onClick={() => onMove(exp.id, "up")} disabled={idx === 0} title="Move Up">▲</button>
+              <button className={s.moveBtn} onClick={() => onMove(exp.id, "down")} disabled={idx === items.length - 1} title="Move Down">▼</button>
+              <button className={s.deleteBtn} onClick={() => onDelete(exp.id)} title="Delete">
+                Delete
+              </button>
+            </div>
           </div>
 
           <div className={s.row}>

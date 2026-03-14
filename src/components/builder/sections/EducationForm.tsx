@@ -6,9 +6,10 @@ interface Props {
   onAdd: () => void;
   onUpdate: (id: string, updates: Partial<Education>) => void;
   onDelete: (id: string) => void;
+  onMove: (id: string, direction: "up" | "down") => void;
 }
 
-export default function EducationForm({ items, onAdd, onUpdate, onDelete }: Props) {
+export default function EducationForm({ items, onAdd, onUpdate, onDelete, onMove }: Props) {
   return (
     <div className={s.section}>
       <div className={s.aiSection} style={{ marginBottom: 20 }}>
@@ -26,9 +27,13 @@ export default function EducationForm({ items, onAdd, onUpdate, onDelete }: Prop
             <span className={s.entryCardTitle}>
               {edu.institution || `Institution ${idx + 1}`}
             </span>
-            <button className={s.deleteBtn} onClick={() => onDelete(edu.id)}>
-              Delete
-            </button>
+            <div style={{display: "flex", gap: "6px"}}>
+               <button className={s.moveBtn} onClick={() => onMove(edu.id, "up")} disabled={idx === 0} title="Move Up">▲</button>
+               <button className={s.moveBtn} onClick={() => onMove(edu.id, "down")} disabled={idx === items.length - 1} title="Move Down">▼</button>
+               <button className={s.deleteBtn} onClick={() => onDelete(edu.id)} title="Delete">
+                 Delete
+               </button>
+            </div>
           </div>
 
           <input className={s.input} value={edu.institution}

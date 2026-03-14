@@ -678,6 +678,28 @@
   border-color: rgba(239, 68, 68, 0.5);
 }
 
+.moveBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.moveBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.moveBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
 /* --- Mobile Responsiveness --- */
 @media (max-width: 1024px) {
   .body {

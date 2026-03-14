@@ -6,9 +6,10 @@ interface Props {
   onAdd: () => void;
   onUpdate: (id: string, updates: Partial<Project>) => void;
   onDelete: (id: string) => void;
+  onMove: (id: string, direction: "up" | "down") => void;
 }
 
-export default function ProjectsForm({ items, onAdd, onUpdate, onDelete }: Props) {
+export default function ProjectsForm({ items, onAdd, onUpdate, onDelete, onMove }: Props) {
   return (
     <div className={s.section}>
       <div className={s.aiSection} style={{ marginBottom: 20 }}>
@@ -24,9 +25,13 @@ export default function ProjectsForm({ items, onAdd, onUpdate, onDelete }: Props
         <div key={proj.id} className={s.entryCard}>
           <div className={s.entryCardHeader}>
             <span className={s.entryCardTitle}>{proj.name || `Project ${idx + 1}`}</span>
-            <button className={s.deleteBtn} onClick={() => onDelete(proj.id)}>
-              Delete
-            </button>
+            <div style={{display: "flex", gap: "6px"}}>
+               <button className={s.moveBtn} onClick={() => onMove(proj.id, "up")} disabled={idx === 0} title="Move Up">▲</button>
+               <button className={s.moveBtn} onClick={() => onMove(proj.id, "down")} disabled={idx === items.length - 1} title="Move Down">▼</button>
+               <button className={s.deleteBtn} onClick={() => onDelete(proj.id)} title="Delete">
+                 Delete
+               </button>
+            </div>
           </div>
 
           <div className={s.row}>

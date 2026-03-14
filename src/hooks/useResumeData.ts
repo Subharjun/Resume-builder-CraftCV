@@ -226,6 +226,25 @@ export function useResumeData(initialData?: ResumeData) {
     }));
   }, []);
 
+  const moveSectionItem = useCallback((section: keyof ResumeData, id: string, direction: "up" | "down") => {
+    setData((prev) => {
+      const arr = prev[section];
+      if (!Array.isArray(arr)) return prev;
+      const copy = [...arr];
+      const index = copy.findIndex((item: any) => item.id === id);
+      if (index === -1) return prev;
+      
+      if (direction === "up" && index > 0) {
+        [copy[index - 1], copy[index]] = [copy[index], copy[index - 1]];
+      } else if (direction === "down" && index < copy.length - 1) {
+        [copy[index + 1], copy[index]] = [copy[index], copy[index + 1]];
+      } else {
+        return prev;
+      }
+      return { ...prev, [section]: copy };
+    });
+  }, []);
+
   return {
     data,
     loadData,
@@ -244,5 +263,6 @@ export function useResumeData(initialData?: ResumeData) {
     addCustomSection,
     updateCustomSection,
     removeCustomSection,
+    moveSectionItem,
   };
 }
