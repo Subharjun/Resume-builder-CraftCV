@@ -60,13 +60,13 @@ export default function CreativeTemplate({
 
   const css = `
     .cr-wrap { display:flex; flex-direction:${isSidebarLeft ? "row" : "row-reverse"}; min-height:297mm; font-family:${fontFamily}; color:${activeText}; background:#fff; }
-    .cr-sidebar { width:${style.sidebarWidth}; background:${activeColor}; color:#fff; padding:36px 24px; flex-shrink:0; }
+    .cr-sidebar { width:${style.sidebarWidth}; min-width:180px; max-width:50vw; resize:horizontal; overflow:hidden; background:${activeColor}; color:#fff; padding:36px 24px; flex-shrink:0; }
     .cr-main   { flex:1; padding:36px 32px; }
     .cr-name   { font-size:1.5rem; font-weight:800; color:#fff; line-height:1.2; margin-bottom:4px; }
     .cr-title  { font-size:0.78rem; color:${activeAccent}; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:20px; font-weight:600; }
     .cr-side-section { margin-bottom:24px; }
     .cr-side-label { font-size:0.65rem; text-transform:uppercase; letter-spacing:0.15em; color:rgba(255,255,255,0.5); margin-bottom:10px; font-weight:700; }
-    .cr-contact-row { display:flex; align-items:flex-start; gap:8px; margin-bottom:7px; font-size:0.72rem; color:rgba(255,255,255,0.85); line-height:1.4; word-break:break-all; }
+    .cr-contact-row { display:flex; align-items:flex-start; gap:8px; margin-bottom:7px; font-size:0.72rem; color:rgba(255,255,255,0.85); line-height:1.4; word-break:normal; overflow-wrap:anywhere; }
     .cr-skill-tag   { display:inline-block; padding:4px 10px; border-radius:4px; background:rgba(255,255,255,0.12); color:rgba(255,255,255,0.9); font-size:0.68rem; margin:3px 2px; }
     .cr-section       { margin-bottom:26px; }
     .cr-section-title { font-size:0.7rem; text-transform:uppercase; letter-spacing:0.15em; font-weight:700; color:${activeAccent}; border-bottom:2px solid ${activeAccent}; padding-bottom:6px; margin-bottom:14px; }
@@ -107,36 +107,36 @@ export default function CreativeTemplate({
           <div className="cr-side-section">
             <div className="cr-side-label">Contact</div>
             <div className="cr-contact-row">
-              <span>✉</span>
               <a href={`mailto:${data.personalInfo.email}`} style={{color: "inherit", textDecoration: "none"}}>
-                <InlineEdit style={{display:'inline'}} value={data.personalInfo.email} onChange={(v) => updatePersonalInfo({ email: v })} placeholder="Email" />
+                <span>✉</span>
               </a>
+              <InlineEdit style={{display:'inline'}} value={data.personalInfo.email} onChange={(v) => updatePersonalInfo({ email: v })} placeholder="Email" />
             </div>
             <div className="cr-contact-row">
-              <span>☎</span>
               <a href={`tel:${data.personalInfo.phone?.replace(/\\s/g, "")}`} style={{color: "inherit", textDecoration: "none"}}>
-                <InlineEdit style={{display:'inline'}} value={data.personalInfo.phone} onChange={(v) => updatePersonalInfo({ phone: v })} placeholder="Phone" />
+                <span>☎</span>
               </a>
+              <InlineEdit style={{display:'inline'}} value={data.personalInfo.phone} onChange={(v) => updatePersonalInfo({ phone: v })} placeholder="Phone" />
             </div>
             <div className="cr-contact-row">
-              <span>⌖</span>
               <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.personalInfo.location || "")}`} target="_blank" rel="noreferrer" style={{color: "inherit", textDecoration: "none"}}>
-                <InlineEdit style={{display:'inline'}} value={data.personalInfo.location} onChange={(v) => updatePersonalInfo({ location: v })} placeholder="Location" />
+                <span>⌖</span>
               </a>
+              <InlineEdit style={{display:'inline'}} value={data.personalInfo.location} onChange={(v) => updatePersonalInfo({ location: v })} placeholder="Location" />
             </div>
             {data.personalInfo.linkedin && (
                <div className="cr-contact-row">
-                 <span>in</span>
                  <a href={data.personalInfo.linkedin.startsWith("http") ? data.personalInfo.linkedin : `https://${data.personalInfo.linkedin}`} target="_blank" rel="noreferrer" style={{color: "inherit", textDecoration: "none"}}>
-                   <InlineEdit style={{display:'inline'}} value={data.personalInfo.linkedin} onChange={(v) => updatePersonalInfo({ linkedin: v })} placeholder="LinkedIn" />
+                   <span>in</span>
                  </a>
+                 <InlineEdit style={{display:'inline'}} value={data.personalInfo.linkedin} onChange={(v) => updatePersonalInfo({ linkedin: v })} placeholder="LinkedIn" />
                </div>
             )}
             <div className="cr-contact-row">
-              <span>⊕</span>
               <a href={data.personalInfo.website ? (data.personalInfo.website.startsWith("http") ? data.personalInfo.website : `https://${data.personalInfo.website}`) : "#"} target="_blank" rel="noreferrer" style={{color: "inherit", textDecoration: "none"}}>
-                <InlineEdit style={{display:'inline'}} value={data.personalInfo.website} onChange={(v) => updatePersonalInfo({ website: v })} placeholder="Website" />
+                <span>⊕</span>
               </a>
+              <InlineEdit style={{display:'inline'}} value={data.personalInfo.website} onChange={(v) => updatePersonalInfo({ website: v })} placeholder="Website" />
             </div>
           </div>
 

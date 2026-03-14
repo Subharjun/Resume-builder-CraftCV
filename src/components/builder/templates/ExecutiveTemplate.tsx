@@ -79,44 +79,44 @@ export default function ExecutiveTemplate({
         <div className={styles.sidebarSection}>
           <div className={styles.sidebarSectionTitle}>Contact</div>
           <div className={styles.sidebarItem}>
-            <span className={styles.sidebarIcon}>✉</span> 
+            <a href={`mailto:${p.email}`} target="_blank" rel="noreferrer" style={{color: 'inherit', textDecoration: 'none'}}>
+              <span className={styles.sidebarIcon}>✉</span>
+            </a>
             <span>
-              <a href={`mailto:${p.email}`} style={{color: 'inherit', textDecoration: 'none'}}>
-                <InlineEdit value={p.email} onChange={(v) => updatePersonalInfo({ email: v })} placeholder="Email" />
-              </a>
+              <InlineEdit value={p.email} onChange={(v) => updatePersonalInfo({ email: v })} placeholder="Email" />
             </span>
           </div>
           <div className={styles.sidebarItem}>
-            <span className={styles.sidebarIcon}>✆</span> 
+            <a href={`tel:${p.phone?.replace(/\\s/g, '')}`} target="_blank" rel="noreferrer" style={{color: 'inherit', textDecoration: 'none'}}>
+              <span className={styles.sidebarIcon}>✆</span>
+            </a>
             <span>
-              <a href={`tel:${p.phone?.replace(/\\s/g, '')}`} style={{color: 'inherit', textDecoration: 'none'}}>
-                <InlineEdit value={p.phone} onChange={(v) => updatePersonalInfo({ phone: v })} placeholder="Phone" />
-              </a>
+              <InlineEdit value={p.phone} onChange={(v) => updatePersonalInfo({ phone: v })} placeholder="Phone" />
             </span>
           </div>
           <div className={styles.sidebarItem}>
-            <span className={styles.sidebarIcon}>⌖</span> 
+            <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.location || "")}`} target="_blank" rel="noreferrer" style={{color: 'inherit', textDecoration: 'none'}}>
+              <span className={styles.sidebarIcon}>⌖</span>
+            </a>
             <span>
-              <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.location || "")}`} target="_blank" rel="noreferrer" style={{color: 'inherit', textDecoration: 'none'}}>
-                <InlineEdit value={p.location} onChange={(v) => updatePersonalInfo({ location: v })} placeholder="Location" />
-              </a>
+              <InlineEdit value={p.location} onChange={(v) => updatePersonalInfo({ location: v })} placeholder="Location" />
             </span>
           </div>
           <div className={styles.sidebarItem}>
-            <span className={styles.sidebarIcon}>⊕</span> 
+            <a href={p.website ? (p.website.startsWith("http") ? p.website : `https://${p.website}`) : "#"} target="_blank" rel="noreferrer" style={{color: 'inherit', textDecoration: 'none'}}>
+              <span className={styles.sidebarIcon}>⊕</span>
+            </a>
             <span>
-              <a href={p.website ? (p.website.startsWith("http") ? p.website : `https://${p.website}`) : "#"} target="_blank" rel="noreferrer" style={{color: 'inherit', textDecoration: 'none'}}>
-                <InlineEdit value={p.website} onChange={(v) => updatePersonalInfo({ website: v })} placeholder="Website" />
-              </a>
+              <InlineEdit value={p.website} onChange={(v) => updatePersonalInfo({ website: v })} placeholder="Website" />
             </span>
           </div>
           {p.linkedin && (
              <div className={styles.sidebarItem}>
-               <span className={styles.sidebarIcon}>in</span> 
+               <a href={p.linkedin.startsWith("http") ? p.linkedin : `https://${p.linkedin}`} target="_blank" rel="noreferrer" style={{color: '#c4b5fd', textDecoration: 'none'}}>
+                 <span className={styles.sidebarIcon}>in</span> 
+               </a>
                <span>
-                 <a href={p.linkedin.startsWith("http") ? p.linkedin : `https://${p.linkedin}`} target="_blank" rel="noreferrer" style={{color: '#c4b5fd', textDecoration: 'none'}}>
-                   <InlineEdit value={p.linkedin} onChange={(v) => updatePersonalInfo({ linkedin: v })} placeholder="LinkedIn" />
-                 </a>
+                 <InlineEdit value={p.linkedin} onChange={(v) => updatePersonalInfo({ linkedin: v })} placeholder="LinkedIn" />
                </span>
              </div>
           )}
