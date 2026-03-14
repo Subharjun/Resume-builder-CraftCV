@@ -13,8 +13,6 @@ function getInitials(name: string) {
     .toUpperCase();
 }
 
-const THEME_COLORS = ["#0f172a", "#1e3a8a", "#064e3b", "#7c2d12", "#4c1d95", "#831843", "#3f2021"];
-
 export default function ExecutiveTemplate({ 
   data, 
   updatePersonalInfo, 
@@ -32,24 +30,32 @@ export default function ExecutiveTemplate({
       ? (propSkills as string).split(',').map(s => s.trim()).filter(Boolean)
       : [];
   
-  const activeColor = p.themeColor || THEME_COLORS[0];
+  const activeColor = p.themeColor || "#0f172a";
+  const activeText = p.textColor || "#374151";
 
   return (
     <div className={styles.resume} id="resume-preview">
+      <style dangerouslySetInnerHTML={{ __html: `
+        #resume-preview .${styles.sectionTitle} {
+          color: ${activeColor} !important;
+          border-bottom-color: ${activeColor} !important;
+        }
+        #resume-preview .${styles.sidebarSectionTitle} {
+          color: ${activeColor} !important;
+        }
+        #resume-preview .${styles.skillDot} {
+          background-color: ${activeColor} !important;
+        }
+        #resume-preview .${styles.summaryText}, 
+        #resume-preview .${styles.entryDesc} {
+          color: ${activeText} !important;
+        }
+        #resume-preview .${styles.entryTitle} {
+          color: ${activeText} !important;
+        }
+      `}} />
       {/* Sidebar */}
       <div className={styles.sidebar} style={{ backgroundColor: activeColor }}>
-        {/* Color Picker Grid (hidden on print/export, purely for building) */}
-        <div className={styles.colorPicker}>
-           {THEME_COLORS.map(c => (
-              <button 
-                 key={c} 
-                 className={styles.colorBtn} 
-                 style={{ backgroundColor: c, border: activeColor === c ? '2px solid white' : '1px solid rgba(255,255,255,0.2)' }}
-                 onClick={() => updatePersonalInfo({ themeColor: c })}
-              />
-           ))}
-        </div>
-
         <div>
           <div className={styles.avatar}>
             {p.photoUrl ? (

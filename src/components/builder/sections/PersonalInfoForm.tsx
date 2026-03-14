@@ -3,6 +3,9 @@ import { useState } from "react";
 import { PersonalInfo } from "@/types/resume";
 import s from "./FormSections.module.css";
 
+const THEME_COLORS = ["#1e1b4b", "#0f172a", "#1e3a8a", "#064e3b", "#7c2d12", "#4c1d95", "#831843", "#3f2021", "#3b82f6", "#10b981", "#f59e0b", "#e11d48"];
+const TEXT_COLORS = ["#1a202c", "#374151", "#1e293b", "#0f172a", "#000000", "#312e81", "#14532d", "#450a0a"];
+
 interface Props {
   data: PersonalInfo;
   onChange: (info: Partial<PersonalInfo>) => void;
@@ -122,6 +125,48 @@ export default function PersonalInfoForm({ data, onChange }: Props) {
           value={data.linkedin || ""} 
           onChange={(e) => onChange({ linkedin: e.target.value })} 
         />
+      </div>
+
+      <div className={s.field} style={{ marginTop: 24 }}>
+        <label className={s.label}>Theme Color</label>
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "4px" }}>
+          {THEME_COLORS.map((c) => (
+            <button
+              key={c}
+              onClick={() => onChange({ themeColor: c })}
+              style={{
+                width: 24,
+                height: 24,
+                borderRadius: "50%",
+                backgroundColor: c,
+                border: data.themeColor === c ? "2px solid var(--accent-color)" : "1px solid var(--border-color)",
+                cursor: "pointer",
+                padding: 0
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className={s.field}>
+        <label className={s.label}>Text Color</label>
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "4px" }}>
+          {TEXT_COLORS.map((c) => (
+            <button
+              key={c}
+              onClick={() => onChange({ textColor: c })}
+              style={{
+                width: 24,
+                height: 24,
+                borderRadius: "50%",
+                backgroundColor: c,
+                border: data.textColor === c ? "2px solid var(--accent-color)" : "1px solid var(--border-color)",
+                cursor: "pointer",
+                padding: 0
+              }}
+            />
+          ))}
+        </div>
       </div>
 
     </div>

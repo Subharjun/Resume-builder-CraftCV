@@ -8,6 +8,7 @@ export interface PersonalInfo {
   title: string; // e.g. "Senior Software Engineer"
   photoUrl?: string;
   themeColor?: string;
+  textColor?: string;
 }
 
 export interface Experience {

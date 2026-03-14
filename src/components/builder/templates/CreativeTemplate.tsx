@@ -32,8 +32,6 @@ const fontFamilies: Record<string, string> = {
   bold:    "'Outfit', 'Arial Black', sans-serif",
 };
 
-const THEME_COLORS = ["#1e1b4b", "#0f172a", "#1e3a8a", "#064e3b", "#7c2d12", "#4c1d95", "#831843", "#3f2021"];
-
 import { TemplateProps } from "@/types/resume";
 import InlineEdit from "../InlineEdit";
 import RichEditor from "../RichEditor";
@@ -58,9 +56,10 @@ export default function CreativeTemplate({
 
   const activeColor = personalInfo.themeColor || style.primaryColor;
   const activeAccent = personalInfo.themeColor || style.accentColor;
+  const activeText = personalInfo.textColor || style.textColor;
 
   const css = `
-    .cr-wrap { display:flex; flex-direction:${isSidebarLeft ? "row" : "row-reverse"}; min-height:297mm; font-family:${fontFamily}; color:${style.textColor}; background:#fff; }
+    .cr-wrap { display:flex; flex-direction:${isSidebarLeft ? "row" : "row-reverse"}; min-height:297mm; font-family:${fontFamily}; color:${activeText}; background:#fff; }
     .cr-sidebar { width:${style.sidebarWidth}; background:${activeColor}; color:#fff; padding:36px 24px; flex-shrink:0; }
     .cr-main   { flex:1; padding:36px 32px; }
     .cr-name   { font-size:1.5rem; font-weight:800; color:#fff; line-height:1.2; margin-bottom:4px; }
@@ -72,18 +71,16 @@ export default function CreativeTemplate({
     .cr-section       { margin-bottom:26px; }
     .cr-section-title { font-size:0.7rem; text-transform:uppercase; letter-spacing:0.15em; font-weight:700; color:${activeAccent}; border-bottom:2px solid ${activeAccent}; padding-bottom:6px; margin-bottom:14px; }
     .cr-exp-item { margin-bottom:16px; }
-    .cr-exp-role { font-size:0.88rem; font-weight:700; color:${style.textColor}; }
-    .cr-exp-meta { font-size:0.72rem; color:#666; margin-bottom:6px; display:flex; gap:8px; flex-wrap:wrap; }
+    .cr-exp-role { font-size:0.88rem; font-weight:700; color:${activeText}; }
+    .cr-exp-meta { font-size:0.72rem; color:#666; margin-bottom:6px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    .cr-exp-date { display:flex; gap:4px; align-items:center; white-space:nowrap; }
     .cr-exp-company { color:${activeAccent}; font-weight:600; }
-    .cr-exp-desc { font-size:0.74rem; color:#444; line-height:1.6; white-space:pre-line; }
-    .cr-sum { font-size:0.8rem; line-height:1.7; color:#444; }
-    .cr-proj-name { font-size:0.85rem; font-weight:700; color:${style.textColor}; }
+    .cr-exp-desc { font-size:0.74rem; color:${activeText}; line-height:1.6; white-space:pre-line; }
+    .cr-sum { font-size:0.8rem; line-height:1.7; color:${activeText}; }
+    .cr-proj-name { font-size:0.85rem; font-weight:700; color:${activeText}; }
     .cr-proj-tech { font-size:0.68rem; color:${activeAccent}; margin-bottom:4px; }
-    .cr-proj-desc { font-size:0.74rem; color:#444; line-height:1.5; }
+    .cr-proj-desc { font-size:0.74rem; color:${activeText}; line-height:1.5; }
     .cr-photo { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 3px solid rgba(255,255,255,0.2); margin-bottom: 24px; display: block; }
-    .cr-picker { display:flex; justify-content:center; gap:6px; margin-bottom:20px; flex-wrap:wrap; }
-    .cr-color-btn { width:16px; height:16px; border-radius:50%; cursor:pointer; transition:transform 0.2s; }
-    .cr-color-btn:hover { transform:scale(1.2); }
   `;
 
   return (
@@ -92,18 +89,6 @@ export default function CreativeTemplate({
       <div className="cr-wrap">
         {/* Sidebar */}
         <div className="cr-sidebar">
-          {/* Color Picker Grid (hidden on print/export, purely for building) */}
-          <div className="cr-picker">
-             {THEME_COLORS.map(c => (
-                <button 
-                   key={c} 
-                   className="cr-color-btn" 
-                   style={{ backgroundColor: c, border: activeColor === c ? '2px solid white' : '1px solid rgba(255,255,255,0.2)' }}
-                   onClick={() => updatePersonalInfo({ themeColor: c })}
-                />
-             ))}
-          </div>
-
           {personalInfo.photoUrl && (
              <img src={personalInfo.photoUrl} alt="Avatar" className="cr-photo" />
           )}
@@ -201,11 +186,11 @@ export default function CreativeTemplate({
                       onChange={(v) => updateExperience(exp.id, { company: v })}
                       placeholder="Company"
                     />
-                    <span>
+                    <div className="cr-exp-date">
                       <InlineEdit value={exp.startDate} onChange={(v) => updateExperience(exp.id, { startDate: v })} placeholder="Start" />
-                      {" – "}
+                      <span>–</span>
                       <InlineEdit value={exp.current ? "Present" : exp.endDate} onChange={(v) => updateExperience(exp.id, { endDate: v, current: v.toLowerCase()==='present' })} placeholder="End" />
-                    </span>
+                    </div>
                   </div>
                   <RichEditor
                     className="cr-exp-desc"
