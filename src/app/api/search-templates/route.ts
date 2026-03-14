@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const CATEGORIES: Record<string, string> = {
-  professional: "professional resume template clean ATS 2024",
-  creative: "creative designer resume template modern colorful",
-  minimal: "minimal resume template simple elegant",
-  modern: "modern tech resume template two column",
-  executive: "executive senior resume template corporate",
+  professional: "professional resume template",
+  creative: "creative designer resume template",
+  minimal: "minimalist resume template modern",
+  modern: "modern tech resume template",
+  executive: "corporate executive resume template",
 };
 
 export async function GET(req: NextRequest) {
