@@ -340,13 +340,35 @@
 }
 
 .previewPaper {
+  position: relative;
   width: 100%;
   max-width: 794px; /* A4 width at 96dpi */
+  min-height: 1123px; /* A4 height */
   box-shadow:
     0 4px 8px rgba(0,0,0,0.12),
     0 24px 60px rgba(0,0,0,0.25);
   border-radius: 2px;
   overflow: hidden;
+  /* Prevent flex layout from squishing the paper - allows it to increase infinitely */
+  flex-shrink: 0;
+}
+
+/* MS Word style visual page break indicator */
+.previewPaper::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none; /* Let clicks pass through */
+  /* Draw a subtle separator every 1123 pixels (height of A4 page) */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 1121px,
+    #94a3b8 1121px,
+    #94a3b8 1122px,
+    transparent 1122px,
+    transparent 1123px
+  );
 }
 
 .previewLabel {
