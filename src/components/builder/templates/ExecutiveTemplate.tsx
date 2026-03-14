@@ -1,6 +1,7 @@
 import { TemplateProps } from "@/types/resume";
 import styles from "./ExecutiveTemplate.module.css";
 import InlineEdit from "../InlineEdit";
+import RichEditor from "../RichEditor";
 
 function getInitials(name: string) {
   if (!name) return "YN";
@@ -101,10 +102,9 @@ export default function ExecutiveTemplate({
         {/* Summary */}
         <div className={styles.mainSection}>
           <div className={styles.sectionTitle}>Profile</div>
-          <InlineEdit
-            multiline
+          <RichEditor
             className={styles.summaryText}
-            value={summary}
+            value={summary || ""}
             onChange={updateSummary}
             placeholder="Write your profile summary..."
           />
@@ -133,12 +133,11 @@ export default function ExecutiveTemplate({
                   value={exp.company || "Company"}
                   onChange={(v) => updateExperience(exp.id, { company: v })}
                 />
-                <InlineEdit
-                  multiline
+                <RichEditor
                   className={styles.entryDesc}
-                  value={exp.description}
+                  value={exp.description || ""}
                   onChange={(v) => updateExperience(exp.id, { description: v })}
-                  placeholder="Describe your role..."
+                  placeholder="Describe your role and responsibilities..."
                 />
               </div>
             ))}
@@ -194,12 +193,11 @@ export default function ExecutiveTemplate({
                   onChange={(v) => updateProject(proj.id, { url: v })}
                   placeholder="URL"
                 />
-                <InlineEdit
-                  multiline
+                <RichEditor
                   className={styles.entryDesc}
                   value={proj.description || ""}
                   onChange={(v) => updateProject(proj.id, { description: v })}
-                  placeholder="Description"
+                  placeholder="Describe your project here..."
                 />
                 <div className={styles.projTech}>
                   Tech: <InlineEdit value={proj.technologies || ""} onChange={(v) => updateProject(proj.id, { technologies: v })} placeholder="React, Node..." />
@@ -219,10 +217,11 @@ export default function ExecutiveTemplate({
                 placeholder="Section Title"
               />
             </div>
-            <div 
-               className="tiptap-content" 
-               style={{ fontSize: "12.5px", lineHeight: "1.7", color: "#374151" }}
-               dangerouslySetInnerHTML={{ __html: sec.content || "<p>Write your custom content here...</p>" }} 
+            <RichEditor
+              className={styles.entryDesc}
+              value={sec.content || ""}
+              onChange={(v) => updateCustomSection(sec.id, { content: v })}
+              placeholder="Add your lists, achievements, or summary here..."
             />
           </div>
         ))}

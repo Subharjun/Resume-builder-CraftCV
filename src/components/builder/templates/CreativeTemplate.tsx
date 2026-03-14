@@ -34,6 +34,7 @@ const fontFamilies: Record<string, string> = {
 
 import { TemplateProps } from "@/types/resume";
 import InlineEdit from "../InlineEdit";
+import RichEditor from "../RichEditor";
 
 export default function CreativeTemplate({ 
   data, 
@@ -154,9 +155,11 @@ export default function CreativeTemplate({
         <div className="cr-main">
           <div className="cr-section">
             <div className="cr-section-title">Profile</div>
-            <div 
-               className="tiptap-content cr-sum" 
-               dangerouslySetInnerHTML={{ __html: data.summary || "<p>Write your profile summary...</p>" }} 
+            <RichEditor
+              className="cr-sum"
+              value={data.summary || ""}
+              onChange={updateSummary}
+              placeholder="Write your profile summary..."
             />
           </div>
 
@@ -184,9 +187,11 @@ export default function CreativeTemplate({
                       <InlineEdit value={exp.current ? "Present" : exp.endDate} onChange={(v) => updateExperience(exp.id, { endDate: v, current: v.toLowerCase()==='present' })} placeholder="End" />
                     </span>
                   </div>
-                  <div 
-                     className="tiptap-content cr-exp-desc" 
-                     dangerouslySetInnerHTML={{ __html: exp.description }} 
+                  <RichEditor
+                    className="cr-exp-desc"
+                    value={exp.description || ""}
+                    onChange={(v) => updateExperience(exp.id, { description: v })}
+                    placeholder="List your responsibilities and achievements..."
                   />
                 </div>
               ))}
@@ -210,9 +215,11 @@ export default function CreativeTemplate({
                     onChange={(v) => updateProject(proj.id, { technologies: v })}
                     placeholder="Tech Stack"
                   />
-                  <div 
-                     className="tiptap-content cr-proj-desc" 
-                     dangerouslySetInnerHTML={{ __html: proj.description }} 
+                  <RichEditor
+                    className="cr-proj-desc"
+                    value={proj.description || ""}
+                    onChange={(v) => updateProject(proj.id, { description: v })}
+                    placeholder="Describe your project..."
                   />
                 </div>
               ))}
@@ -229,9 +236,11 @@ export default function CreativeTemplate({
                   placeholder="Section Title"
                 />
               </div>
-              <div 
-                 className="tiptap-content cr-sum" 
-                 dangerouslySetInnerHTML={{ __html: sec.content }} 
+              <RichEditor
+                className="cr-sum"
+                value={sec.content || ""}
+                onChange={(v) => updateCustomSection(sec.id, { content: v })}
+                placeholder="Add your lists, achievements, or summary here..."
               />
             </div>
           ))}
