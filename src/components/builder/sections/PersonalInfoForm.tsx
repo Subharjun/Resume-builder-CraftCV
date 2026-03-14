@@ -22,7 +22,6 @@ export default function PersonalInfoForm({ data, onChange }: Props) {
        });
        const result = await res.json();
        if (result.result) {
-          // Extract title from result or just set it
           onChange({ title: result.result.slice(0, 40) });
        }
      } catch {
@@ -37,17 +36,66 @@ export default function PersonalInfoForm({ data, onChange }: Props) {
        <div className={s.aiSection}>
         <div className={s.aiLogo}>✦</div>
         <h3 className={s.aiTitle}>Profile Strategist</h3>
-        <p className={s.aiDesc}>Your identity and professional hook. Edit details on the right.</p>
+        <p className={s.aiDesc}>Your identity and professional hook. Edit details below or directly on the resume.</p>
         <button className={s.aiActionBtn} onClick={optimizeTitle} disabled={loading}>
           {loading ? "Optimizing..." : "✦ Optimize Title with AI"}
         </button>
       </div>
 
-      <div className={s.field} style={{ marginTop: 12 }}>
-        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textAlign: 'center' }}>
-          Tip: Click any text on the resume preview to edit your name, contact info, or title directly!
-        </p>
+      <div className={s.field} style={{ marginTop: 24 }}>
+        <label className={s.label}>Photo URL</label>
+        <input 
+          className={s.input} 
+          placeholder="https://example.com/photo.jpg" 
+          value={data.photoUrl || ""} 
+          onChange={(e) => onChange({ photoUrl: e.target.value })} 
+        />
+        <p style={{fontSize: 11, color: "var(--text-muted)", marginTop: 4}}>Used in Creative & Executive templates (if applicable).</p>
       </div>
+
+      <div className={s.row}>
+        <div className={s.field}>
+          <label className={s.label}>Full Name</label>
+          <input className={s.input} placeholder="John Doe" value={data.fullName || ""} onChange={(e) => onChange({ fullName: e.target.value })} />
+        </div>
+        <div className={s.field}>
+          <label className={s.label}>Title</label>
+          <input className={s.input} placeholder="e.g. UX Designer" value={data.title || ""} onChange={(e) => onChange({ title: e.target.value })} />
+        </div>
+      </div>
+
+      <div className={s.row}>
+        <div className={s.field}>
+          <label className={s.label}>Email</label>
+          <input className={s.input} placeholder="john@example.com" value={data.email || ""} onChange={(e) => onChange({ email: e.target.value })} />
+        </div>
+        <div className={s.field}>
+          <label className={s.label}>Phone</label>
+          <input className={s.input} placeholder="(555) 123-4567" value={data.phone || ""} onChange={(e) => onChange({ phone: e.target.value })} />
+        </div>
+      </div>
+
+      <div className={s.row}>
+        <div className={s.field}>
+          <label className={s.label}>Location</label>
+          <input className={s.input} placeholder="New York, NY" value={data.location || ""} onChange={(e) => onChange({ location: e.target.value })} />
+        </div>
+        <div className={s.field}>
+          <label className={s.label}>Website</label>
+          <input className={s.input} placeholder="johndoe.com" value={data.website || ""} onChange={(e) => onChange({ website: e.target.value })} />
+        </div>
+      </div>
+
+      <div className={s.field}>
+        <label className={s.label}>LinkedIn</label>
+        <input 
+          className={s.input} 
+          placeholder="linkedin.com/in/johndoe" 
+          value={data.linkedin || ""} 
+          onChange={(e) => onChange({ linkedin: e.target.value })} 
+        />
+      </div>
+
     </div>
   );
 }

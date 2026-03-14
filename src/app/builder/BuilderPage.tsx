@@ -7,7 +7,6 @@ import { TemplateId, FormSection } from "@/types/resume";
 import MinimalistTemplate from "@/components/builder/templates/MinimalistTemplate";
 import ExecutiveTemplate from "@/components/builder/templates/ExecutiveTemplate";
 import CreativeTemplate, { CreativeStyle, defaultCreativeStyle } from "@/components/builder/templates/CreativeTemplate";
-import ProfessionalTemplate from "@/components/builder/templates/ProfessionalTemplate";
 import TemplateGallery from "@/components/builder/TemplateGallery";
 import PersonalInfoForm from "@/components/builder/sections/PersonalInfoForm";
 import SummaryForm from "@/components/builder/sections/SummaryForm";
@@ -29,7 +28,6 @@ const TABS: { id: FormSection; label: string; icon: string }[] = [
 
 const TEMPLATES: { id: TemplateId; label: string; locked?: boolean }[] = [
   { id: "minimalist", label: "Minimalist" },
-  { id: "professional", label: "Professional Pro" },
   { id: "executive", label: "Executive" },
   { id: "creative", label: "✦ Creative", locked: true },
 ];
@@ -427,19 +425,6 @@ export default function BuilderPage() {
                 addCustomSection={addCustomSection}
                 removeCustomSection={removeCustomSection}
               />
-            ) : activeTemplate === "professional" ? (
-               <ProfessionalTemplate 
-                data={data} 
-                updatePersonalInfo={updatePersonalInfo}
-                updateSummary={updateSummary}
-                updateExperience={updateExperience}
-                updateEducation={updateEducation}
-                updateProject={updateProject}
-                updateSkills={updateSkills}
-                updateCustomSection={updateCustomSection}
-                addCustomSection={addCustomSection}
-                removeCustomSection={removeCustomSection}
-               />
             ) : activeTemplate === "executive" ? (
               <ExecutiveTemplate 
                 data={data} 

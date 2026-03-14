@@ -38,6 +38,9 @@ export default function MinimalistTemplate({
           <span className={styles.contactItem}>✉ <InlineEdit value={p.email} onChange={(v) => updatePersonalInfo({ email: v })} placeholder="email@example.com" /></span>
           <span className={styles.contactItem}>✆ <InlineEdit value={p.phone} onChange={(v) => updatePersonalInfo({ phone: v })} placeholder="Phone" /></span>
           <span className={styles.contactItem}>⌖ <InlineEdit value={p.location} onChange={(v) => updatePersonalInfo({ location: v })} placeholder="Location" /></span>
+          {p.linkedin && (
+             <span className={styles.contactItem}>in <a href={p.linkedin.startsWith("http") ? p.linkedin : `https://${p.linkedin}`} target="_blank" rel="noreferrer" style={{color: "inherit", textDecoration: "none"}}><InlineEdit value={p.linkedin} onChange={(v) => updatePersonalInfo({ linkedin: v })} placeholder="LinkedIn" /></a></span>
+          )}
           <span className={styles.contactItem}>⊕ <InlineEdit value={p.website} onChange={(v) => updatePersonalInfo({ website: v })} placeholder="Website" /></span>
         </div>
       </div>

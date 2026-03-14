@@ -3,6 +3,7 @@ import styles from "./ExecutiveTemplate.module.css";
 import InlineEdit from "../InlineEdit";
 
 function getInitials(name: string) {
+  if (!name) return "YN";
   return name
     .split(" ")
     .map((n) => n[0])
@@ -11,29 +12,50 @@ function getInitials(name: string) {
     .toUpperCase();
 }
 
+const THEME_COLORS = ["#0f172a", "#1e3a8a", "#064e3b", "#7c2d12", "#4c1d95", "#831843", "#3f2021"];
+
 export default function ExecutiveTemplate({ 
   data, 
   updatePersonalInfo, 
   updateSummary, 
   updateExperience, 
-  updateEducation, 
+  updateEducation,
   updateProject,
-  updateSkills
+  updateSkills,
+  updateCustomSection
 }: TemplateProps) {
-  const { personalInfo: p, summary, experience, education, skills: propSkills, projects } = data;
+  const { personalInfo: p, summary, experience, education, skills: propSkills, projects, customSections = [] } = data;
   const skills: string[] = Array.isArray(propSkills) 
     ? propSkills 
     : typeof propSkills === 'string' 
       ? (propSkills as string).split(',').map(s => s.trim()).filter(Boolean)
       : [];
+  
+  const activeColor = p.themeColor || THEME_COLORS[0];
 
   return (
     <div className={styles.resume} id="resume-preview">
       {/* Sidebar */}
-      <div className={styles.sidebar}>
+      <div className={styles.sidebar} style={{ backgroundColor: activeColor }}>
+        {/* Color Picker Grid (hidden on print/export, purely for building) */}
+        <div className={styles.colorPicker}>
+           {THEME_COLORS.map(c => (
+              <button 
+                 key={c} 
+                 className={styles.colorBtn} 
+                 style={{ backgroundColor: c, border: activeColor === c ? '2px solid white' : '1px solid rgba(255,255,255,0.2)' }}
+                 onClick={() => updatePersonalInfo({ themeColor: c })}
+              />
+           ))}
+        </div>
+
         <div>
           <div className={styles.avatar}>
-            {getInitials(p.fullName || "YN")}
+            {p.photoUrl ? (
+              <img src={p.photoUrl} alt="Avatar" className={styles.avatarImg} />
+            ) : (
+              getInitials(p.fullName || "Your Name")
+            )}
           </div>
           <InlineEdit
             className={styles.sidebarName}
@@ -53,6 +75,13 @@ export default function ExecutiveTemplate({
           <div className={styles.sidebarItem}>✆ <InlineEdit value={p.phone} onChange={(v) => updatePersonalInfo({ phone: v })} placeholder="Phone" /></div>
           <div className={styles.sidebarItem}>⌖ <InlineEdit value={p.location} onChange={(v) => updatePersonalInfo({ location: v })} placeholder="Location" /></div>
           <div className={styles.sidebarItem}>⊕ <InlineEdit value={p.website} onChange={(v) => updatePersonalInfo({ website: v })} placeholder="Website" /></div>
+          {p.linkedin && (
+             <div className={styles.sidebarItem}>
+               in <a href={p.linkedin.startsWith("http") ? p.linkedin : `https://${p.linkedin}`} target="_blank" rel="noreferrer" style={{color: '#c4b5fd', textDecoration: 'none'}}>
+                 <InlineEdit value={p.linkedin} onChange={(v) => updatePersonalInfo({ linkedin: v })} placeholder="LinkedIn" />
+               </a>
+             </div>
+          )}
         </div>
 
         <div className={styles.sidebarSection}>
@@ -179,6 +208,25 @@ export default function ExecutiveTemplate({
             ))}
           </div>
         )}
+
+        {/* Custom Sections */}
+        {customSections.map((sec) => (
+          <div key={sec.id} className={styles.mainSection}>
+            <div className={styles.sectionTitle}>
+              <InlineEdit
+                value={sec.title || "Custom Section"}
+                onChange={(v) => updateCustomSection(sec.id, { title: v })}
+                placeholder="Section Title"
+              />
+            </div>
+            <div 
+               className="tiptap-content" 
+               style={{ fontSize: "12.5px", lineHeight: "1.7", color: "#374151" }}
+               dangerouslySetInnerHTML={{ __html: sec.content || "<p>Write your custom content here...</p>" }} 
+            />
+          </div>
+        ))}
+
       </div>
     </div>
   );

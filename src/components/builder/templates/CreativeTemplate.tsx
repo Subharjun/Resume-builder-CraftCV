@@ -43,9 +43,10 @@ export default function CreativeTemplate({
   updateExperience,
   updateEducation,
   updateProject,
-  updateSkills
+  updateSkills,
+  updateCustomSection
 }: TemplateProps & { style?: CreativeStyle }) {
-  const { personalInfo, summary, experience, education, skills, projects } = data;
+  const { personalInfo, summary, experience, education, skills, projects, customSections = [] } = data;
   const fontFamily = fontFamilies[style.fontStyle] ?? fontFamilies.modern;
   const skillList: string[] = Array.isArray(skills)
     ? skills
@@ -73,6 +74,7 @@ export default function CreativeTemplate({
     .cr-proj-name { font-size:0.85rem; font-weight:700; color:${style.textColor}; }
     .cr-proj-tech { font-size:0.68rem; color:${style.accentColor}; margin-bottom:4px; }
     .cr-proj-desc { font-size:0.74rem; color:#444; line-height:1.5; }
+    .cr-photo { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 3px solid rgba(255,255,255,0.2); margin-bottom: 24px; display: block; }
   `;
 
   return (
@@ -81,6 +83,10 @@ export default function CreativeTemplate({
       <div className="cr-wrap">
         {/* Sidebar */}
         <div className="cr-sidebar">
+          {personalInfo.photoUrl && (
+             <img src={personalInfo.photoUrl} alt="Avatar" className="cr-photo" />
+          )}
+
           <InlineEdit
             className="cr-name"
             value={data.personalInfo.fullName || "Your Name"}
@@ -97,7 +103,14 @@ export default function CreativeTemplate({
             <div className="cr-contact-row"><span>✉</span><InlineEdit style={{display:'inline'}} value={data.personalInfo.email} onChange={(v) => updatePersonalInfo({ email: v })} placeholder="Email" /></div>
             <div className="cr-contact-row"><span>☎</span><InlineEdit style={{display:'inline'}} value={data.personalInfo.phone} onChange={(v) => updatePersonalInfo({ phone: v })} placeholder="Phone" /></div>
             <div className="cr-contact-row"><span>⌖</span><InlineEdit style={{display:'inline'}} value={data.personalInfo.location} onChange={(v) => updatePersonalInfo({ location: v })} placeholder="Location" /></div>
-            <div className="cr-contact-row"><span>in</span><InlineEdit style={{display:'inline'}} value={data.personalInfo.linkedin} onChange={(v) => updatePersonalInfo({ linkedin: v })} placeholder="LinkedIn" /></div>
+            {data.personalInfo.linkedin && (
+               <div className="cr-contact-row">
+                 <span>in</span>
+                 <a href={data.personalInfo.linkedin.startsWith("http") ? data.personalInfo.linkedin : `https://${data.personalInfo.linkedin}`} target="_blank" rel="noreferrer" style={{color: "inherit", textDecoration: "none"}}>
+                   <InlineEdit style={{display:'inline'}} value={data.personalInfo.linkedin} onChange={(v) => updatePersonalInfo({ linkedin: v })} placeholder="LinkedIn" />
+                 </a>
+               </div>
+            )}
             <div className="cr-contact-row"><span>⊕</span><InlineEdit style={{display:'inline'}} value={data.personalInfo.website} onChange={(v) => updatePersonalInfo({ website: v })} placeholder="Website" /></div>
           </div>
 
@@ -141,12 +154,9 @@ export default function CreativeTemplate({
         <div className="cr-main">
           <div className="cr-section">
             <div className="cr-section-title">Profile</div>
-            <InlineEdit
-              multiline
-              className="cr-sum"
-              value={data.summary}
-              onChange={updateSummary}
-              placeholder="Tell your story..."
+            <div 
+               className="tiptap-content cr-sum" 
+               dangerouslySetInnerHTML={{ __html: data.summary || "<p>Write your profile summary...</p>" }} 
             />
           </div>
 
@@ -174,12 +184,9 @@ export default function CreativeTemplate({
                       <InlineEdit value={exp.current ? "Present" : exp.endDate} onChange={(v) => updateExperience(exp.id, { endDate: v, current: v.toLowerCase()==='present' })} placeholder="End" />
                     </span>
                   </div>
-                  <InlineEdit
-                    multiline
-                    className="cr-exp-desc"
-                    value={exp.description}
-                    onChange={(v) => updateExperience(exp.id, { description: v })}
-                    placeholder="Responsibilities..."
+                  <div 
+                     className="tiptap-content cr-exp-desc" 
+                     dangerouslySetInnerHTML={{ __html: exp.description }} 
                   />
                 </div>
               ))}
@@ -203,17 +210,32 @@ export default function CreativeTemplate({
                     onChange={(v) => updateProject(proj.id, { technologies: v })}
                     placeholder="Tech Stack"
                   />
-                  <InlineEdit
-                    multiline
-                    className="cr-proj-desc"
-                    value={proj.description}
-                    onChange={(v) => updateProject(proj.id, { description: v })}
-                    placeholder="Project details..."
+                  <div 
+                     className="tiptap-content cr-proj-desc" 
+                     dangerouslySetInnerHTML={{ __html: proj.description }} 
                   />
                 </div>
               ))}
             </div>
           )}
+
+          {/* Custom Sections */}
+          {customSections.map((sec) => (
+            <div key={sec.id} className="cr-section">
+              <div className="cr-section-title">
+                <InlineEdit
+                  value={sec.title}
+                  onChange={(v) => updateCustomSection(sec.id, { title: v })}
+                  placeholder="Section Title"
+                />
+              </div>
+              <div 
+                 className="tiptap-content cr-sum" 
+                 dangerouslySetInnerHTML={{ __html: sec.content }} 
+              />
+            </div>
+          ))}
+
         </div>
       </div>
     </div>

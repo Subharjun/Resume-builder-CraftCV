@@ -6,6 +6,8 @@ export interface PersonalInfo {
   website: string;
   linkedin: string;
   title: string; // e.g. "Senior Software Engineer"
+  photoUrl?: string;
+  themeColor?: string;
 }
 
 export interface Experience {
@@ -53,7 +55,7 @@ export interface ResumeData {
   sectionOrder?: string[]; // IDs or keys of sections
 }
 
-export type TemplateId = "minimalist" | "executive" | "creative" | "professional";
+export type TemplateId = "minimalist" | "executive" | "creative";
 
 export type FormSection =
   | "personal"

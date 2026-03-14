@@ -17,21 +17,48 @@
   padding: 40px 20px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.colorPicker {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.colorBtn {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.colorBtn:hover {
+  transform: scale(1.2);
 }
 
 .avatar {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 50%;
-  background: linear-gradient(135deg, #8b5cf6, #0ea5e9);
-  margin-bottom: 4px;
+  margin: 0 auto 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
   color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .sidebarName {
