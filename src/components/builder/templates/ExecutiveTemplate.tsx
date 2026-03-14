@@ -72,15 +72,18 @@ export default function ExecutiveTemplate({
 
         <div className={styles.sidebarSection}>
           <div className={styles.sidebarSectionTitle}>Contact</div>
-          <div className={styles.sidebarItem}>✉ <InlineEdit value={p.email} onChange={(v) => updatePersonalInfo({ email: v })} placeholder="Email" /></div>
-          <div className={styles.sidebarItem}>✆ <InlineEdit value={p.phone} onChange={(v) => updatePersonalInfo({ phone: v })} placeholder="Phone" /></div>
-          <div className={styles.sidebarItem}>⌖ <InlineEdit value={p.location} onChange={(v) => updatePersonalInfo({ location: v })} placeholder="Location" /></div>
-          <div className={styles.sidebarItem}>⊕ <InlineEdit value={p.website} onChange={(v) => updatePersonalInfo({ website: v })} placeholder="Website" /></div>
+          <div className={styles.sidebarItem}><span className={styles.sidebarIcon}>✉</span> <span><InlineEdit value={p.email} onChange={(v) => updatePersonalInfo({ email: v })} placeholder="Email" /></span></div>
+          <div className={styles.sidebarItem}><span className={styles.sidebarIcon}>✆</span> <span><InlineEdit value={p.phone} onChange={(v) => updatePersonalInfo({ phone: v })} placeholder="Phone" /></span></div>
+          <div className={styles.sidebarItem}><span className={styles.sidebarIcon}>⌖</span> <span><InlineEdit value={p.location} onChange={(v) => updatePersonalInfo({ location: v })} placeholder="Location" /></span></div>
+          <div className={styles.sidebarItem}><span className={styles.sidebarIcon}>⊕</span> <span><InlineEdit value={p.website} onChange={(v) => updatePersonalInfo({ website: v })} placeholder="Website" /></span></div>
           {p.linkedin && (
              <div className={styles.sidebarItem}>
-               in <a href={p.linkedin.startsWith("http") ? p.linkedin : `https://${p.linkedin}`} target="_blank" rel="noreferrer" style={{color: '#c4b5fd', textDecoration: 'none'}}>
-                 <InlineEdit value={p.linkedin} onChange={(v) => updatePersonalInfo({ linkedin: v })} placeholder="LinkedIn" />
-               </a>
+               <span className={styles.sidebarIcon}>in</span> 
+               <span>
+                 <a href={p.linkedin.startsWith("http") ? p.linkedin : `https://${p.linkedin}`} target="_blank" rel="noreferrer" style={{color: '#c4b5fd', textDecoration: 'none'}}>
+                   <InlineEdit value={p.linkedin} onChange={(v) => updatePersonalInfo({ linkedin: v })} placeholder="LinkedIn" />
+                 </a>
+               </span>
              </div>
           )}
         </div>

@@ -6,18 +6,18 @@
   font-family: 'Arial', sans-serif;
   font-size: 12.5px;
   line-height: 1.6;
-  display: grid;
-  grid-template-columns: 200px 1fr;
+  display: flex;
 }
 
 /* Left sidebar */
 .sidebar {
+  flex-shrink: 0;
+  width: 210px;
   background: #0f172a;
   color: #e2e8f0;
   padding: 40px 20px;
   display: flex;
   flex-direction: column;
-  margin-bottom: 24px;
 }
 
 .colorPicker {
@@ -94,8 +94,16 @@
 .sidebarItem {
   font-size: 10.5px;
   color: #cbd5e1;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
   word-break: break-all;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.sidebarIcon {
+  flex-shrink: 0;
+  width: 14px;
 }
 
 .sidebarSkill {
@@ -118,6 +126,7 @@
 
 /* Right main content */
 .main {
+  flex: 1;
   padding: 40px 36px;
 }
 

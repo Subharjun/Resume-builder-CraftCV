@@ -31,6 +31,18 @@ export default function PersonalInfoForm({ data, onChange }: Props) {
      }
   };
 
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (typeof event.target?.result === "string") {
+        onChange({ photoUrl: event.target.result });
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   return (
     <div className={s.section}>
        <div className={s.aiSection}>
@@ -43,13 +55,29 @@ export default function PersonalInfoForm({ data, onChange }: Props) {
       </div>
 
       <div className={s.field} style={{ marginTop: 24 }}>
-        <label className={s.label}>Photo URL</label>
-        <input 
-          className={s.input} 
-          placeholder="https://example.com/photo.jpg" 
-          value={data.photoUrl || ""} 
-          onChange={(e) => onChange({ photoUrl: e.target.value })} 
-        />
+        <label className={s.label}>Photo (URL or Upload)</label>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <input 
+            className={s.input} 
+            placeholder="https://example.com/photo.jpg" 
+            value={data.photoUrl || ""} 
+            onChange={(e) => onChange({ photoUrl: e.target.value })} 
+          />
+          <label style={{ 
+            cursor: 'pointer', 
+            background: 'var(--bg-secondary)', 
+            border: '1px solid var(--border-color)', 
+            padding: '0 12px', 
+            borderRadius: '6px', 
+            fontSize: '13px', 
+            display: 'flex', 
+            alignItems: 'center',
+            color: 'var(--text-secondary)'
+          }}>
+            Upload
+            <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoUpload} />
+          </label>
+        </div>
         <p style={{fontSize: 11, color: "var(--text-muted)", marginTop: 4}}>Used in Creative & Executive templates (if applicable).</p>
       </div>
 
