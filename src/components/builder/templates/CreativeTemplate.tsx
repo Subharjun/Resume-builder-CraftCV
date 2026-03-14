@@ -106,9 +106,24 @@ export default function CreativeTemplate({
 
           <div className="cr-side-section">
             <div className="cr-side-label">Contact</div>
-            <div className="cr-contact-row"><span>✉</span><InlineEdit style={{display:'inline'}} value={data.personalInfo.email} onChange={(v) => updatePersonalInfo({ email: v })} placeholder="Email" /></div>
-            <div className="cr-contact-row"><span>☎</span><InlineEdit style={{display:'inline'}} value={data.personalInfo.phone} onChange={(v) => updatePersonalInfo({ phone: v })} placeholder="Phone" /></div>
-            <div className="cr-contact-row"><span>⌖</span><InlineEdit style={{display:'inline'}} value={data.personalInfo.location} onChange={(v) => updatePersonalInfo({ location: v })} placeholder="Location" /></div>
+            <div className="cr-contact-row">
+              <span>✉</span>
+              <a href={`mailto:${data.personalInfo.email}`} style={{color: "inherit", textDecoration: "none"}}>
+                <InlineEdit style={{display:'inline'}} value={data.personalInfo.email} onChange={(v) => updatePersonalInfo({ email: v })} placeholder="Email" />
+              </a>
+            </div>
+            <div className="cr-contact-row">
+              <span>☎</span>
+              <a href={`tel:${data.personalInfo.phone?.replace(/\\s/g, "")}`} style={{color: "inherit", textDecoration: "none"}}>
+                <InlineEdit style={{display:'inline'}} value={data.personalInfo.phone} onChange={(v) => updatePersonalInfo({ phone: v })} placeholder="Phone" />
+              </a>
+            </div>
+            <div className="cr-contact-row">
+              <span>⌖</span>
+              <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.personalInfo.location || "")}`} target="_blank" rel="noreferrer" style={{color: "inherit", textDecoration: "none"}}>
+                <InlineEdit style={{display:'inline'}} value={data.personalInfo.location} onChange={(v) => updatePersonalInfo({ location: v })} placeholder="Location" />
+              </a>
+            </div>
             {data.personalInfo.linkedin && (
                <div className="cr-contact-row">
                  <span>in</span>
@@ -117,7 +132,12 @@ export default function CreativeTemplate({
                  </a>
                </div>
             )}
-            <div className="cr-contact-row"><span>⊕</span><InlineEdit style={{display:'inline'}} value={data.personalInfo.website} onChange={(v) => updatePersonalInfo({ website: v })} placeholder="Website" /></div>
+            <div className="cr-contact-row">
+              <span>⊕</span>
+              <a href={data.personalInfo.website ? (data.personalInfo.website.startsWith("http") ? data.personalInfo.website : `https://${data.personalInfo.website}`) : "#"} target="_blank" rel="noreferrer" style={{color: "inherit", textDecoration: "none"}}>
+                <InlineEdit style={{display:'inline'}} value={data.personalInfo.website} onChange={(v) => updatePersonalInfo({ website: v })} placeholder="Website" />
+              </a>
+            </div>
           </div>
 
           <div className="cr-side-section">

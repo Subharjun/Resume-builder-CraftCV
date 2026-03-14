@@ -35,13 +35,33 @@ export default function MinimalistTemplate({
           onChange={(val) => updatePersonalInfo({ title: val })}
         />
         <div className={styles.contacts}>
-          <span className={styles.contactItem}>✉ <InlineEdit value={p.email} onChange={(v) => updatePersonalInfo({ email: v })} placeholder="email@example.com" /></span>
-          <span className={styles.contactItem}>✆ <InlineEdit value={p.phone} onChange={(v) => updatePersonalInfo({ phone: v })} placeholder="Phone" /></span>
-          <span className={styles.contactItem}>⌖ <InlineEdit value={p.location} onChange={(v) => updatePersonalInfo({ location: v })} placeholder="Location" /></span>
+          <span className={styles.contactItem}>
+            ✉ 
+            <a href={`mailto:${p.email}`} style={{color: "inherit", textDecoration: "none"}}>
+              <InlineEdit value={p.email} onChange={(v) => updatePersonalInfo({ email: v })} placeholder="email@example.com" />
+            </a>
+          </span>
+          <span className={styles.contactItem}>
+            ✆ 
+            <a href={`tel:${p.phone?.replace(/\\s/g, "")}`} style={{color: "inherit", textDecoration: "none"}}>
+              <InlineEdit value={p.phone} onChange={(v) => updatePersonalInfo({ phone: v })} placeholder="Phone" />
+            </a>
+          </span>
+          <span className={styles.contactItem}>
+            ⌖ 
+            <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.location || "")}`} target="_blank" rel="noreferrer" style={{color: "inherit", textDecoration: "none"}}>
+              <InlineEdit value={p.location} onChange={(v) => updatePersonalInfo({ location: v })} placeholder="Location" />
+            </a>
+          </span>
           {p.linkedin && (
              <span className={styles.contactItem}>in <a href={p.linkedin.startsWith("http") ? p.linkedin : `https://${p.linkedin}`} target="_blank" rel="noreferrer" style={{color: "inherit", textDecoration: "none"}}><InlineEdit value={p.linkedin} onChange={(v) => updatePersonalInfo({ linkedin: v })} placeholder="LinkedIn" /></a></span>
           )}
-          <span className={styles.contactItem}>⊕ <InlineEdit value={p.website} onChange={(v) => updatePersonalInfo({ website: v })} placeholder="Website" /></span>
+          <span className={styles.contactItem}>
+            ⊕ 
+            <a href={p.website ? (p.website.startsWith("http") ? p.website : `https://${p.website}`) : "#"} target="_blank" rel="noreferrer" style={{color: "inherit", textDecoration: "none"}}>
+              <InlineEdit value={p.website} onChange={(v) => updatePersonalInfo({ website: v })} placeholder="Website" />
+            </a>
+          </span>
         </div>
       </div>
 
