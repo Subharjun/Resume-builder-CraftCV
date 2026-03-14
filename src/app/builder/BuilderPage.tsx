@@ -287,7 +287,6 @@ export default function BuilderPage() {
               <div key={s.id} className={styles.customSectionItem}>
                 <input 
                   className={styles.titleInput} 
-                  style={{fontSize: '0.9rem', marginBottom: 5}}
                   value={s.title} 
                   onChange={(e) => updateCustomSection(s.id, { title: e.target.value })} 
                 />
