@@ -60,7 +60,7 @@ export default function CreativeTemplate({
 
   const css = `
     .cr-wrap { display:flex; flex-direction:${isSidebarLeft ? "row" : "row-reverse"}; min-height:297mm; font-family:${fontFamily}; color:${activeText}; background:#fff; }
-    .cr-sidebar { width:${style.sidebarWidth}; min-width:180px; max-width:50vw; resize:horizontal; overflow:hidden; background:${activeColor}; color:#fff; padding:36px 24px; flex-shrink:0; }
+    .cr-sidebar { width:${style.sidebarWidth}; min-width:180px; max-width:50%; resize:horizontal; overflow:hidden; background:${activeColor}; color:#fff; padding:36px 24px; flex-shrink:0; }
     .cr-main   { flex:1; padding:36px 32px; }
     .cr-name   { font-size:1.5rem; font-weight:800; color:#fff; line-height:1.2; margin-bottom:4px; }
     .cr-title  { font-size:0.78rem; color:${activeAccent}; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:20px; font-weight:600; }
