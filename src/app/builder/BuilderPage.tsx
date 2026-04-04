@@ -79,27 +79,21 @@ export default function BuilderPage() {
   const previewRef = useRef<HTMLDivElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
 
-  // Load resume from Supabase if ?id= is present
+  // Load resume from MongoDB if ?id= is present
   const loadResume = useCallback(async (id: string) => {
     setIsLoading(true);
     try {
-      const { createClient } = await import("@/lib/supabase/client");
-      const supabase = createClient();
-      const { data: row, error } = await supabase
-        .from("resumes")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (error || !row) {
-        console.error("Could not load resume:", error);
+      const response = await fetch(`/api/resumes/${id}`);
+      if (!response.ok) {
+        console.error("Could not load resume");
         return;
       }
 
-      setLoadedResumeId(row.id);
-      setResumeTitle(row.title);
-      setActiveTemplate(row.template as TemplateId);
-      loadData(row.data as typeof emptyData);
+      const { resume } = await response.json();
+      setLoadedResumeId(resume._id);
+      setResumeTitle(resume.title);
+      setActiveTemplate(resume.template as TemplateId);
+      loadData(resume.data as typeof emptyData);
     } catch (err) {
       console.error("Load failed:", err);
     } finally {
@@ -208,36 +202,42 @@ export default function BuilderPage() {
     setSaving(true);
     setSaveStatus("idle");
     try {
-      const { createClient } = await import("@/lib/supabase/client");
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      // Check if user is logged in
+      const userResponse = await fetch("/api/auth/me");
+      if (!userResponse.ok) {
         setSaveStatus("login");
         setSaving(false);
         return;
       }
 
       const payload = {
-        user_id: user.id,
         title: resumeTitle || (data.personalInfo.fullName ? `${data.personalInfo.fullName}'s Resume` : "Untitled Resume"),
         template: activeTemplate,
         data: data as unknown as Record<string, unknown>,
       };
 
-      let result;
+      let response;
       if (loadedResumeId) {
         // Update existing resume
-        result = await supabase
-          .from("resumes")
-          .update({ ...payload, updated_at: new Date().toISOString() })
-          .eq("id", loadedResumeId);
+        response = await fetch(`/api/resumes/${loadedResumeId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
       } else {
         // Insert new resume
-        result = await supabase.from("resumes").insert(payload).select().single();
-        if (result.data) setLoadedResumeId(result.data.id);
+        response = await fetch("/api/resumes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (response.ok) {
+          const result = await response.json();
+          if (result.resume?._id) setLoadedResumeId(result.resume._id);
+        }
       }
 
-      if (result.error) throw result.error;
+      if (!response.ok) throw new Error("Save failed");
       setSaveStatus("saved");
       setTimeout(() => setSaveStatus("idle"), 3000);
     } catch (err) {

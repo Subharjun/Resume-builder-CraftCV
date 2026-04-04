@@ -3,14 +3,19 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
 import styles from "./Dashboard.module.css";
 
 interface Resume {
-  id: string;
+  _id: string;
   title: string;
   template: string;
   updated_at: string;
+}
+
+interface User {
+  id: string;
+  email: string;
+  full_name?: string;
 }
 
 function timeAgo(dateStr: string) {
@@ -26,30 +31,40 @@ function timeAgo(dateStr: string) {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<{ email?: string; user_metadata?: { full_name?: string } } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [loading, setLoading] = useState(true);
 
   const loadData = useCallback(async () => {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { router.push("/auth/login"); return; }
-    setUser(user);
+    try {
+      // Get current user
+      const userResponse = await fetch("/api/auth/me");
+      if (!userResponse.ok) {
+        router.push("/auth/login");
+        return;
+      }
+      const userData = await userResponse.json();
+      setUser(userData.user);
 
-    const { data } = await supabase
-      .from("resumes")
-      .select("id, title, template, updated_at")
-      .order("updated_at", { ascending: false });
-
-    setResumes(data ?? []);
-    setLoading(false);
+      // Get resumes
+      const resumesResponse = await fetch("/api/resumes");
+      if (resumesResponse.ok) {
+        const resumesData = await resumesResponse.json();
+        setResumes(resumesData.resumes || []);
+      }
+    } catch (error) {
+      console.error("Error loading data:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [router]);
 
-  useEffect(() => { loadData(); }, [loadData]);
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleSignOut = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    await fetch("/api/auth/logout", { method: "POST" });
     router.push("/");
     router.refresh();
   };
@@ -58,12 +73,16 @@ export default function DashboardPage() {
     e.preventDefault();
     e.stopPropagation();
     if (!confirm("Delete this resume?")) return;
-    const supabase = createClient();
-    await supabase.from("resumes").delete().eq("id", id);
-    setResumes((prev) => prev.filter((r) => r.id !== id));
+    
+    try {
+      await fetch(`/api/resumes/${id}`, { method: "DELETE" });
+      setResumes((prev) => prev.filter((r) => r._id !== id));
+    } catch (error) {
+      console.error("Error deleting resume:", error);
+    }
   };
 
-  const firstName = user?.user_metadata?.full_name?.split(" ")[0] || user?.email?.split("@")[0] || "there";
+  const firstName = user?.full_name?.split(" ")[0] || user?.email?.split("@")[0] || "there";
 
   const templateEmoji: Record<string, string> = {
     minimalist: "📄",
@@ -152,10 +171,10 @@ export default function DashboardPage() {
             ) : (
               resumes.map((resume) => (
                 <Link
-                  key={resume.id}
-                  href={`/builder?id=${resume.id}`}
+                  key={resume._id}
+                  href={`/builder?id=${resume._id}`}
                   className={styles.resumeCard}
-                  id={`resume-card-${resume.id}`}
+                  id={`resume-card-${resume._id}`}
                 >
                   <div className={styles.resumePreview}>
                     {templateEmoji[resume.template] ?? "📄"}
@@ -168,7 +187,7 @@ export default function DashboardPage() {
                         <span className={styles.templateBadge}>{resume.template}</span>
                         <button
                           className={styles.deleteBtn}
-                          onClick={(e) => handleDelete(resume.id, e)}
+                          onClick={(e) => handleDelete(resume._id, e)}
                           title="Delete resume"
                         >
                           ×

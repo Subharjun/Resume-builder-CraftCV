@@ -6,9 +6,15 @@ import styles from "./Navbar.module.css";
 
 const navLinks = ["Features", "Templates", "Pricing", "About"];
 
+interface User {
+  id: string;
+  email: string;
+  full_name?: string;
+}
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [user, setUser] = useState<{ email?: string; user_metadata?: { full_name?: string } } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -20,14 +26,17 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    import("@/lib/supabase/client").then(({ createClient }) => {
-      const supabase = createClient();
-      supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
-        setUser(session?.user ?? null);
+    // Check if user is logged in
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.user) {
+          setUser(data.user);
+        }
+      })
+      .catch(() => {
+        // User not logged in
       });
-      return () => subscription.unsubscribe();
-    });
   }, []);
 
   // Close dropdown when clicking outside
@@ -41,16 +50,14 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const initials = user?.user_metadata?.full_name
-    ? user.user_metadata.full_name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()
+  const initials = user?.full_name
+    ? user.full_name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()
     : user?.email?.[0]?.toUpperCase() ?? "U";
 
-  const displayName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User";
+  const displayName = user?.full_name || user?.email?.split("@")[0] || "User";
 
   const handleSignOut = async () => {
-    const { createClient } = await import("@/lib/supabase/client");
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    await fetch("/api/auth/logout", { method: "POST" });
     setUser(null);
     setDropdownOpen(false);
     router.push("/");
